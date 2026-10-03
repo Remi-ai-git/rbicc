@@ -1,0 +1,11 @@
+name = "rbicc"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "rbicc-db"
+database_id = "9cf05928-bb2c-4a83-81a9-3616ca9ca0d1"
+
+[vars]
+GITHUB_REPO = "Remi-ai-git/rbicc"

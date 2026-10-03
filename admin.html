@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin — RB ICC</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F7FB; --surface:#FFFFFF; --ink:#17213A; --slate:#5A6478; --line:#DDE2EC;
+  --cobalt:#2350D8; --cobalt-soft:#E6ECFD; --sun:#FFC52E; --sun-ink:#3A2A00; --red:#D23A3A; --red-soft:#FBE6E6; --green:#1E9E6A;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r-sm:6px; --r-md:12px;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#0E1424;--surface:#161E33;--ink:#EEF1F8;--slate:#9AA5BD;--line:#26314D;--cobalt:#7C97FF;--cobalt-soft:#1E2A4D;--red-soft:#3A1E22}}
+:root[data-theme="dark"]{--paper:#0E1424;--surface:#161E33;--ink:#EEF1F8;--slate:#9AA5BD;--line:#26314D;--cobalt:#7C97FF;--cobalt-soft:#1E2A4D;--red-soft:#3A1E22}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15.5px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.05}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--cobalt)}
+img{max-width:100%;display:block}
+:focus-visible{outline:3px solid var(--sun);outline-offset:1px;border-radius:4px}
+.hidden{display:none!important}
+
+/* ---- Login ---- */
+#loginView{min-height:100dvh;display:grid;place-items:center;padding:20px}
+.login-card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:32px}
+.login-card .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.7rem;margin-bottom:4px}
+.login-card p.sub{color:var(--slate);margin:0 0 22px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.85rem;font-weight:600;color:var(--slate);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--paper);color:var(--ink)}
+.field textarea{resize:vertical;min-height:90px;font-family:var(--body)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:var(--r-sm);border:0;font-weight:600;text-decoration:none}
+.btn-primary{background:var(--cobalt);color:#fff}
+.btn-sun{background:var(--sun);color:var(--sun-ink)}
+.btn-ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.btn-danger{background:var(--red-soft);color:var(--red)}
+.btn-block{width:100%}
+.btn:disabled{opacity:.6;cursor:default}
+.err{background:var(--red-soft);color:var(--red);padding:10px 12px;border-radius:var(--r-sm);font-size:.9rem;margin-bottom:16px}
+.hint{font-size:.82rem;color:var(--slate);margin-top:14px;line-height:1.5}
+.divider{display:flex;align-items:center;gap:10px;color:var(--slate);font-size:.82rem;margin:18px 0}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ---- App shell ---- */
+#appView{display:flex;min-height:100dvh}
+.side{width:230px;flex:none;background:var(--ink);color:#C9D3EE;display:flex;flex-direction:column;padding:20px 14px}
+:root[data-theme="dark"] .side{background:#08101F}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .side{background:#08101F}}
+.side .brand{display:flex;align-items:center;gap:8px;color:#fff;font-family:var(--display);font-weight:800;font-size:1.4rem;padding:6px 8px 22px}
+.side nav{display:flex;flex-direction:column;gap:2px}
+.side nav a{color:#C9D3EE;text-decoration:none;padding:10px 12px;border-radius:var(--r-sm);font-weight:500;border-left:3px solid transparent}
+.side nav a:hover{background:rgba(255,255,255,.06)}
+.side nav a.active{background:rgba(255,255,255,.09);color:#fff;border-left-color:var(--sun);font-weight:600}
+.side .spacer{flex:1}
+.side .foot a{display:block;color:#8FA0C9;text-decoration:none;padding:9px 12px;font-size:.9rem}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 26px;border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.topbar h1{font-size:1.5rem}
+.topbar-r{display:flex;align-items:center;gap:10px}
+.icon-btn{background:none;border:1px solid var(--line);border-radius:var(--r-sm);width:36px;height:36px;color:var(--ink)}
+.content{padding:26px;max-width:1100px;width:100%;margin:0 auto;flex:1}
+.menu-toggle{display:none;background:none;border:1px solid var(--line);border-radius:var(--r-sm);width:36px;height:36px}
+@media (max-width:880px){
+  .side{position:fixed;inset:0 auto 0 0;transform:translateX(-100%);transition:transform .2s;z-index:40;box-shadow:0 0 0 100vmax rgba(0,0,0,0)}
+  .side.open{transform:translateX(0);box-shadow:0 0 0 100vmax rgba(0,0,0,.45)}
+  .menu-toggle{display:block}
+  .content{padding:18px}
+}
+
+/* ---- Dashboard ---- */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:18px}
+.stat b{font-family:var(--display);font-size:2.1rem;display:block;line-height:1}
+.stat small{color:var(--slate)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:20px 22px;margin-bottom:20px}
+.panel h3{font-size:1.2rem;margin-bottom:14px}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.row-between p{color:var(--slate);margin:2px 0 0}
+
+/* ---- Lists / tables ---- */
+.list{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.list-row{display:flex;align-items:center;gap:14px;padding:13px 4px;border-bottom:1px solid var(--line)}
+.list-row .thumb{width:52px;height:52px;border-radius:var(--r-sm);background:var(--cobalt-soft);flex:none;overflow:hidden;display:grid;place-items:center;font-family:var(--display);font-weight:700;color:var(--cobalt)}
+.list-row .thumb img{width:100%;height:100%;object-fit:cover}
+.list-row .main{flex:1;min-width:0}
+.list-row .main b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list-row .main small{color:var(--slate)}
+.list-row .acts{display:flex;gap:6px;flex:none}
+.pill{display:inline-block;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--cobalt-soft);color:var(--cobalt)}
+.pill.warn{background:#FFF1CC;color:#8A6200}
+.pill.off{background:var(--line);color:var(--slate)}
+.empty-msg{padding:30px 4px;color:var(--slate);text-align:center}
+.icon-sm{width:32px;height:32px;border:1px solid var(--line);background:none;border-radius:var(--r-sm);color:var(--ink)}
+.icon-sm.danger{color:var(--red);border-color:var(--red-soft)}
+
+/* ---- Dialog / form ---- */
+dialog{border:0;padding:0;border-radius:var(--r-md);max-width:min(640px,calc(100vw - 24px));width:100%;background:var(--surface);color:var(--ink);max-height:calc(100dvh - 40px)}
+dialog::backdrop{background:rgba(8,12,24,.65)}
+.dlg-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface)}
+.dlg-head h3{font-size:1.3rem}
+.dlg-body{padding:20px 22px;overflow:auto;max-height:calc(100dvh - 140px)}
+.dlg-foot{display:flex;justify-content:space-between;gap:10px;padding:16px 22px;border-top:1px solid var(--line)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:520px){.two-col{grid-template-columns:1fr}}
+.img-field{display:flex;gap:10px;align-items:start}
+.img-field input[type=text]{flex:1}
+.img-field .prev{width:52px;height:52px;border-radius:var(--r-sm);background:var(--line);flex:none;overflow:hidden}
+.img-field .prev img{width:100%;height:100%;object-fit:cover}
+.file-btn{position:relative;overflow:hidden}
+.file-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.checkline{display:flex;align-items:center;gap:8px;margin:4px 0 14px}
+.checkline input{width:auto}
+.list-edit{display:flex;flex-direction:column;gap:8px;margin-bottom:6px}
+.list-edit .li{display:flex;gap:8px}
+.list-edit .li input{flex:1}
+
+/* ---- Photo grid (album manager) ---- */
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.photo-card{position:relative;border-radius:var(--r-sm);overflow:hidden;aspect-ratio:1;background:var(--line)}
+.photo-card img{width:100%;height:100%;object-fit:cover}
+.photo-card .cap{position:absolute;left:0;right:0;bottom:0;background:rgba(8,12,24,.75);color:#fff;font-size:.72rem;padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.photo-card button{position:absolute;top:4px;right:4px;width:24px;height:24px;border:0;border-radius:50%;background:rgba(8,12,24,.65);color:#fff;font-size:.85rem;line-height:1}
+.upload-drop{border:2px dashed var(--line);border-radius:var(--r-sm);padding:20px;text-align:center;color:var(--slate);position:relative;margin-bottom:16px}
+.upload-drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+/* ---- Toast ---- */
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:80;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:.9rem;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast.err{background:var(--red)}
+.demo-tag{background:var(--sun);color:var(--sun-ink);font-size:.78rem;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+@media (max-width:600px){#whoami{display:none}.topbar{padding:12px 14px}.topbar h1{font-size:1.25rem}}
+</style>
+</head>
+<body>
+
+<div id="loginView">
+  <div class="login-card">
+    <div class="brand"><svg width="30" height="30" viewBox="0 0 40 40" aria-hidden="true"><circle cx="11" cy="26" r="8" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="29" cy="26" r="8" fill="none" stroke="currentColor" stroke-width="3"/><path d="M11 26 17 14h10l2 12M17 14l6 12h-12M15 10h5" fill="none" stroke="#FFC52E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg> RB ICC</div>
+
+    <div id="setupPane" class="hidden">
+      <p class="sub">Belum ada akun admin. Buat akun admin pertama untuk mulai mengelola situs ini.</p>
+      <div id="setupErr" class="err hidden"></div>
+      <form id="setupForm">
+        <div class="field"><label for="su_name">Nama</label><input id="su_name" required></div>
+        <div class="field"><label for="su_email">Email</label><input id="su_email" type="email" autocomplete="username" required></div>
+        <div class="field"><label for="su_pass">Kata sandi (min. 8 karakter)</label><input id="su_pass" type="password" minlength="8" autocomplete="new-password" required></div>
+        <div class="field"><label for="su_key">Kunci setup</label><input id="su_key" required><p class="hint" style="margin-top:6px">Nilai <code>SETUP_KEY</code> yang Anda pasang sebagai secret Worker.</p></div>
+        <button class="btn btn-primary btn-block" type="submit" id="setupBtn">Buat akun admin</button>
+      </form>
+    </div>
+
+    <div id="loginPane">
+      <p class="sub">Masuk untuk mengelola konten website.</p>
+      <div id="loginErr" class="err hidden"></div>
+      <form id="loginForm">
+        <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username" required></div>
+        <div class="field"><label for="pass">Kata sandi</label><input id="pass" type="password" autocomplete="current-password" required></div>
+        <button class="btn btn-primary btn-block" type="submit" id="loginBtn">Masuk</button>
+      </form>
+      <div id="demoBox" class="hidden">
+        <div class="divider">atau</div>
+        <button class="btn btn-ghost btn-block" id="demoBtn">Masuk mode demo</button>
+        <p class="hint">Server belum dikonfigurasi (API_BASE kosong di admin.html dan index.html). Mode demo memakai data contoh yang tersimpan sementara di peramban ini saja — cocok untuk mencoba tampilan admin sebelum data asli disambungkan.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="appView" class="hidden">
+  <aside class="side" id="side">
+    <div class="brand"><svg width="26" height="26" viewBox="0 0 40 40" aria-hidden="true"><circle cx="11" cy="26" r="8" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="29" cy="26" r="8" fill="none" stroke="currentColor" stroke-width="3"/><path d="M11 26 17 14h10l2 12M17 14l6 12h-12M15 10h5" fill="none" stroke="#FFC52E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg> RB ICC</div>
+    <nav id="nav">
+      <a href="#dashboard" data-r="dashboard">Dashboard</a>
+      <a href="#umum" data-r="umum">Info Umum</a>
+      <a href="#kegiatan" data-r="kegiatan">Kegiatan</a>
+      <a href="#galeri" data-r="galeri">Galeri</a>
+      <a href="#berita" data-r="berita">Berita</a>
+      <a href="#anggota" data-r="anggota">Anggota</a>
+    </nav>
+    <div class="spacer"></div>
+    <div class="foot"><a href="index.html" target="_blank">Lihat website ↗</a><a href="#" id="logoutLink">Keluar</a></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
+        <h1 id="pageTitle">Dashboard</h1>
+        <span id="demoTag" class="demo-tag hidden">MODE DEMO</span>
+      </div>
+      <div class="topbar-r">
+        <span class="muted" id="whoami" style="color:var(--slate);font-size:.88rem"></span>
+        <button class="icon-btn" id="themeBtn" title="Ganti tema" aria-label="Ganti tema">◐</button>
+      </div>
+    </header>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<dialog id="formDlg">
+  <div class="dlg-head"><h3 id="dlgTitle"></h3><button class="icon-sm" data-close aria-label="Tutup">×</button></div>
+  <form id="dlgForm"><div class="dlg-body" id="dlgBody"></div>
+    <div class="dlg-foot">
+      <button type="button" class="btn btn-danger hidden" id="dlgDelete">Hapus</button>
+      <span style="flex:1"></span>
+      <button type="button" class="btn btn-ghost" data-close>Batal</button>
+      <button type="submit" class="btn btn-primary" id="dlgSave">Simpan</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="albumDlg" style="max-width:min(760px,calc(100vw - 24px))">
+  <div class="dlg-head"><h3 id="albumTitle"></h3><button class="icon-sm" data-close aria-label="Tutup">×</button></div>
+  <div class="dlg-body">
+    <label class="upload-drop">Tambah foto (bisa pilih banyak sekaligus)<input type="file" id="photoInput" accept="image/*" multiple></label>
+    <div class="photo-grid" id="photoGrid"></div>
+  </div>
+</dialog>
+
+<div id="toast"></div>
+
+<script>
+/* ================= KONFIGURASI =================
+   Samakan dengan API_BASE di index.html — URL Worker setelah di-deploy
+   (mis. https://rbicc-api.<subdomain>.workers.dev). Kosongkan untuk mode demo. */
+const API_BASE = "";
+
+const CATEGORY = {gowes_rutin:"Gowes rutin",touring:"Touring",event:"Event",sosial:"Sosial",agenda:"Agenda"};
+const LEVELOPT = {santai:"Santai",menengah:"Menengah",berat:"Berat"};
+const POSTCAT = {berita:"Berita",tips:"Tips",cerita:"Cerita",pengumuman:"Pengumuman"};
+const EVSTATUS = {draft:"Draf",published:"Terbit",cancelled:"Dibatalkan"};
+const POSTSTATUS = {draft:"Draf",published:"Terbit"};
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>crypto.randomUUID?crypto.randomUUID():"id-"+Math.random().toString(36).slice(2)+Date.now();
+function slugify(s){return String(s||"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"").slice(0,80)}
+function toast(msg,isErr){const t=document.createElement("div");t.className="toast"+(isErr?" err":"");t.textContent=msg;$("#toast").appendChild(t);setTimeout(()=>t.remove(),3400)}
+function toLocalInput(iso){if(!iso)return"";const d=new Date(iso),p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`}
+function fromLocalInput(v){return v?new Date(v).toISOString():null}
+function fmtShort(iso){return iso?new Intl.DateTimeFormat("id-ID",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(iso)):"–"}
+
+/* ================= Backend layer =================
+   Repo menyediakan fungsi yang sama baik untuk server asli maupun mode demo,
+   supaya kode tampilan di bawah tidak perlu tahu bedanya. */
+let Repo, session=null, LIVE=false;
+
+function makeDemoRepo(){
+  const KEY="rbicc_demo_v1";
+  const seed=()=>({
+    settings:{
+      general:{name:"RB ICC",full_name:"Komunitas Sepeda RB ICC",tagline:"Gowes bareng, pulang bawa cerita.",founded:"2019",base_city:"Medan",about:"RB ICC adalah komunitas pesepeda yang terbuka untuk semua level.",vision:"Menjadi komunitas sepeda yang sehat, aman, dan bermanfaat bagi sekitar.",missions:["Rutin gowes bersama setiap pekan","Mengutamakan keselamatan di jalan","Aktif dalam kegiatan sosial"]},
+      contact:{address:"",whatsapp:"",email:"",maps_url:"",instagram:"",facebook:"",youtube:"",tiktok:"",strava:""}
+    },
+    events:[{id:uid(),title:"Gowes Minggu Pagi",category:"gowes_rutin",level:"santai",start_at:new Date(Date.now()+3*86400000).toISOString(),end_at:null,meeting_point:"Lapangan Merdeka",meeting_map_url:"",route_name:"Keliling kota",distance_km:35,elevation_m:120,cover_url:"",registration_url:"",description:"Gowes rutin mingguan, kecepatan santai.",status:"published"}],
+    albums:[],posts:[],members:[]
+  });
+  let db=JSON.parse(localStorage.getItem(KEY)||"null")||seed();
+  const save=()=>localStorage.setItem(KEY,JSON.stringify(db));
+  const delay=(v)=>new Promise(r=>setTimeout(()=>r(v),120));
+  return {
+    async signIn(){session={user:{email:"demo@rbicc.local"}};return{ok:true}},
+    async signOut(){session=null},
+    async getSession(){return sessionStorage.getItem("rbicc_demo_session")?{user:{email:"demo@rbicc.local"}}:null},
+    async getGeneral(){return delay(db.settings.general)},
+    async getContact(){return delay(db.settings.contact)},
+    async saveGeneral(v){db.settings.general=v;save();return delay(v)},
+    async saveContact(v){db.settings.contact=v;save();return delay(v)},
+    async listEvents(){return delay([...db.events].sort((a,b)=>new Date(b.start_at)-new Date(a.start_at)))},
+    async saveEvent(v){v.id=v.id||uid();v.slug=v.slug||slugify(v.title);const i=db.events.findIndex(e=>e.id===v.id);i>-1?db.events[i]=v:db.events.push(v);save();return delay(v)},
+    async deleteEvent(id){db.events=db.events.filter(e=>e.id!==id);save();return delay(true)},
+    async listAlbums(){return delay([...db.albums].sort((a,b)=>new Date(b.taken_on||0)-new Date(a.taken_on||0)))},
+    async saveAlbum(v){v.id=v.id||uid();v.photos=v.photos||[];const i=db.albums.findIndex(a=>a.id===v.id);i>-1?db.albums[i]={...db.albums[i],...v}:db.albums.push(v);save();return delay(v)},
+    async deleteAlbum(id){db.albums=db.albums.filter(a=>a.id!==id);save();return delay(true)},
+    async addPhoto(albumId,photo){const a=db.albums.find(x=>x.id===albumId);photo.id=uid();photo.sort_order=(a.photos.length?Math.max(...a.photos.map(p=>p.sort_order||0)):0)+1;a.photos.push(photo);save();return delay(photo)},
+    async deletePhoto(albumId,photoId){const a=db.albums.find(x=>x.id===albumId);a.photos=a.photos.filter(p=>p.id!==photoId);save();return delay(true)},
+    async listPosts(){return delay([...db.posts].sort((a,b)=>new Date(b.published_at||0)-new Date(a.published_at||0)))},
+    async savePost(v){v.id=v.id||uid();v.slug=v.slug||slugify(v.title);const i=db.posts.findIndex(p=>p.id===v.id);i>-1?db.posts[i]=v:db.posts.push(v);save();return delay(v)},
+    async deletePost(id){db.posts=db.posts.filter(p=>p.id!==id);save();return delay(true)},
+    async listMembers(){return delay([...db.members].sort((a,b)=>(a.sort_order||0)-(b.sort_order||0)))},
+    async saveMember(v){v.id=v.id||uid();const i=db.members.findIndex(m=>m.id===v.id);i>-1?db.members[i]=v:db.members.push(v);save();return delay(v)},
+    async deleteMember(id){db.members=db.members.filter(m=>m.id!==id);save();return delay(true)},
+    async upload(file){return delay(await new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(file)}))}
+  };
+}
+
+function authErrMsg(status){
+  const m={401:"Email atau kata sandi salah.",403:"Tidak diizinkan.",404:"Server tidak ditemukan — periksa API_BASE.",0:"Gagal terhubung ke server. Periksa koneksi internet atau API_BASE."};
+  return m[status]||("Gagal masuk (kode "+status+")")
+}
+let apiToken=null;
+function makeApiRepo(){
+  async function call(path,opts){
+    opts=opts||{};
+    const headers=opts.headers||{};
+    if(apiToken)headers["Authorization"]="Bearer "+apiToken;
+    if(opts.body&&!(opts.body instanceof FormData)){headers["Content-Type"]="application/json";opts.body=JSON.stringify(opts.body)}
+    let res;try{res=await fetch(API_BASE+path,{...opts,headers})}catch{throw new Error("Gagal terhubung ke server. Periksa koneksi internet atau API_BASE.")}
+    if(!res.ok){let msg;try{msg=(await res.json()).error}catch{}throw new Error(msg||authErrMsg(res.status))}
+    return res.status===204?null:res.json();
+  }
+  return {
+    async signIn(email,pass){
+      try{const r=await call("/api/login",{method:"POST",body:{email,password:pass}});apiToken=r.token;localStorage.setItem("rbicc_admin_token",r.token);session={user:{email:r.email}};return{ok:true}}
+      catch(err){return{ok:false,error:err.message}}},
+    async signOut(){apiToken=null;localStorage.removeItem("rbicc_admin_token")},
+    async getSession(){
+      const t=localStorage.getItem("rbicc_admin_token");if(!t)return null;apiToken=t;
+      try{const r=await call("/api/admin/session");return{user:{email:r.email}}}catch{apiToken=null;localStorage.removeItem("rbicc_admin_token");return null}},
+    async getGeneral(){return call("/api/admin/settings/general")},
+    async getContact(){return call("/api/admin/settings/contact")},
+    async saveGeneral(v){return call("/api/admin/settings/general",{method:"PUT",body:v})},
+    async saveContact(v){return call("/api/admin/settings/contact",{method:"PUT",body:v})},
+    async listEvents(){return call("/api/admin/events")},
+    async saveEvent(v){v.id=v.id||uid();return call("/api/admin/events/"+v.id,{method:"PUT",body:v})},
+    async deleteEvent(id){return call("/api/admin/events/"+id,{method:"DELETE"})},
+    async listAlbums(){return call("/api/admin/albums")},
+    async saveAlbum(v){v.id=v.id||uid();const {photos,...row}=v;const r=await call("/api/admin/albums/"+row.id,{method:"PUT",body:row});return {...r,photos:photos||[]}},
+    async deleteAlbum(id){return call("/api/admin/albums/"+id,{method:"DELETE"})},
+    async addPhoto(albumId,photo){return call("/api/admin/albums/"+albumId+"/photos",{method:"POST",body:photo})},
+    async deletePhoto(albumId,photoId){return call("/api/admin/albums/"+albumId+"/photos/"+photoId,{method:"DELETE"})},
+    async listPosts(){return call("/api/admin/posts")},
+    async savePost(v){v.id=v.id||uid();return call("/api/admin/posts/"+v.id,{method:"PUT",body:v})},
+    async deletePost(id){return call("/api/admin/posts/"+id,{method:"DELETE"})},
+    async listMembers(){return call("/api/admin/members")},
+    async saveMember(v){v.id=v.id||uid();return call("/api/admin/members/"+v.id,{method:"PUT",body:v})},
+    async deleteMember(id){return call("/api/admin/members/"+id,{method:"DELETE"})},
+    async upload(file){const fd=new FormData();fd.append("file",file);const r=await call("/api/admin/upload",{method:"POST",body:fd});return r.url}
+  };
+}
+
+/* ================= Generic form builder ================= */
+function fieldHTML(f,v){
+  v=v??f.def??"";
+  const id="f_"+f.k;
+  if(f.type==="select")return `<div class="field"><label for="${id}">${f.l}</label><select id="${id}" name="${f.k}">${Object.entries(f.opts).map(([k,l])=>`<option value="${k}" ${k===v?"selected":""}>${l}</option>`).join("")}</select></div>`;
+  if(f.type==="textarea")return `<div class="field"><label for="${id}">${f.l}</label><textarea id="${id}" name="${f.k}" rows="${f.rows||5}">${esc(v)}</textarea></div>`;
+  if(f.type==="checkbox")return `<div class="checkline"><input type="checkbox" id="${id}" name="${f.k}" ${v?"checked":""}><label for="${id}" style="margin:0;font-weight:600;color:var(--ink)">${f.l}</label></div>`;
+  if(f.type==="image")return `<div class="field"><label for="${id}">${f.l}</label><div class="img-field"><div class="prev">${v?`<img src="${esc(v)}">`:""}</div><input type="text" id="${id}" name="${f.k}" value="${esc(v)}" placeholder="Tempel URL, atau unggah →"><label class="btn btn-ghost file-btn">Unggah<input type="file" accept="image/*" data-upload-for="${id}"></label></div></div>`;
+  if(f.type==="datetime")return `<div class="field"><label for="${id}">${f.l}</label><input type="datetime-local" id="${id}" name="${f.k}" value="${toLocalInput(v)}" ${f.req?"required":""}></div>`;
+  if(f.type==="date")return `<div class="field"><label for="${id}">${f.l}</label><input type="date" id="${id}" name="${f.k}" value="${v?String(v).slice(0,10):""}"></div>`;
+  return `<div class="field"><label for="${id}">${f.l}</label><input type="${f.type}" id="${id}" name="${f.k}" value="${esc(v)}" ${f.req?"required":""} ${f.step?`step="${f.step}"`:""}></div>`;
+}
+function renderFields(fields,obj,cols){
+  const html=fields.map(f=>fieldHTML(f,obj?.[f.k])).join("");
+  return cols?`<div class="two-col">${html}</div>`:html;
+}
+function collectFields(form,fields){
+  const out={};
+  for(const f of fields){
+    const el=form.elements[f.k];if(!el)continue;
+    if(f.type==="checkbox")out[f.k]=el.checked;
+    else if(f.type==="number")out[f.k]=el.value===""?null:Number(el.value);
+    else if(f.type==="datetime")out[f.k]=fromLocalInput(el.value);
+    else out[f.k]=el.value||null;
+  }
+  return out;
+}
+const dlg=$("#formDlg");
+function openForm({title,fields,cols,value,onSave,onDelete}){
+  $("#dlgTitle").textContent=title;
+  $("#dlgBody").innerHTML=renderFields(fields,value,cols);
+  $("#dlgDelete").classList.toggle("hidden",!onDelete);
+  const form=$("#dlgForm");
+  form.onsubmit=async e=>{
+    e.preventDefault();
+    const btn=$("#dlgSave");btn.disabled=true;btn.textContent="Menyimpan…";
+    try{await onSave(collectFields(form,fields));dlg.close()}
+    catch(err){toast(err.message||"Gagal menyimpan",true)}
+    finally{btn.disabled=false;btn.textContent="Simpan"}
+  };
+  $("#dlgDelete").onclick=async()=>{
+    if(!confirm("Hapus data ini? Tindakan tidak bisa dibatalkan."))return;
+    try{await onDelete();dlg.close();toast("Terhapus")}catch(err){toast(err.message||"Gagal menghapus",true)}
+  };
+  dlg.showModal();
+}
+/* Kecilkan foto di browser sebelum diunggah: maks 1920px sisi terpanjang, JPEG ~85%.
+   Mengurangi risiko gagal unggah (CPU Worker gratis dibatasi 10ms) dan mempercepat loading situs. */
+async function compressImage(file){
+  if(!file.type||!file.type.startsWith("image/")||file.type==="image/svg+xml")return file;
+  if(file.size<400*1024)return file; // sudah kecil, tak perlu diproses
+  try{
+    const bitmap=await createImageBitmap(file);
+    const maxDim=1920, scale=Math.min(1,maxDim/Math.max(bitmap.width,bitmap.height));
+    const w=Math.round(bitmap.width*scale), h=Math.round(bitmap.height*scale);
+    const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;
+    canvas.getContext("2d").drawImage(bitmap,0,0,w,h);
+    const blob=await new Promise(res=>canvas.toBlob(res,"image/jpeg",0.85));
+    if(!blob||blob.size>=file.size)return file;
+    return new File([blob],file.name.replace(/\.[^.]+$/,"")+".jpg",{type:"image/jpeg"});
+  }catch{return file} // gagal kompres (format tak didukung dll) -> kirim file asli
+}
+dlg.addEventListener("change",async e=>{
+  const t=e.target.closest("[data-upload-for]");if(!t)return;
+  const file=t.files[0];if(!file)return;
+  const target=$("#"+t.dataset.uploadFor);
+  t.closest(".file-btn").style.opacity=".5";
+  try{const url=await Repo.upload(await compressImage(file));target.value=url;target.closest(".img-field").querySelector(".prev").innerHTML=`<img src="${esc(url)}">`}
+  catch(err){toast(err.message||"Gagal mengunggah",true)}
+  finally{t.closest(".file-btn").style.opacity="1"}
+});
+$$("dialog").forEach(d=>d.addEventListener("click",e=>{if(e.target===d)d.close()}));
+document.addEventListener("click",e=>{if(e.target.closest("[data-close]"))e.target.closest("dialog").close()});
+
+/* ================= Pages ================= */
+const PAGE_TITLES={dashboard:"Dashboard",umum:"Info Umum",kegiatan:"Kegiatan",galeri:"Galeri",berita:"Berita",anggota:"Anggota"};
+
+async function pageDashboard(){
+  const [events,posts,albums,members]=await Promise.all([Repo.listEvents(),Repo.listPosts(),Repo.listAlbums(),Repo.listMembers()]);
+  const upcoming=events.filter(e=>new Date(e.start_at)>=new Date()&&e.status!=="cancelled").length;
+  const drafts=posts.filter(p=>p.status==="draft").length;
+  $("#content").innerHTML=`
+    <div class="stat-grid">
+      <div class="stat"><b>${upcoming}</b><small>kegiatan akan datang</small></div>
+      <div class="stat"><b>${events.length}</b><small>total kegiatan</small></div>
+      <div class="stat"><b>${albums.length}</b><small>album galeri</small></div>
+      <div class="stat"><b>${posts.length}</b><small>artikel (${drafts} draf)</small></div>
+      <div class="stat"><b>${members.length}</b><small>anggota / pengurus</small></div>
+    </div>
+    <div class="panel">
+      <h3>Kegiatan terdekat</h3>
+      <div class="list">${events.filter(e=>new Date(e.start_at)>=new Date()).slice(0,5).map(e=>`
+        <div class="list-row"><div class="main"><b>${esc(e.title)}</b><small>${fmtShort(e.start_at)}</small></div><span class="pill">${CATEGORY[e.category]||""}</span></div>`).join("")||'<p class="empty-msg">Belum ada kegiatan mendatang.</p>'}</div>
+    </div>`;
+}
+
+async function pageUmum(){
+  const [general,contact]=await Promise.all([Repo.getGeneral(),Repo.getContact()]);
+  $("#content").innerHTML=`
+    <div class="panel"><h3>Profil komunitas</h3><form id="genForm">
+      <div class="two-col">
+        <div class="field"><label>Nama singkat</label><input name="name" value="${esc(general.name)}" required></div>
+        <div class="field"><label>Nama lengkap</label><input name="full_name" value="${esc(general.full_name)}"></div>
+        <div class="field"><label>Tagline</label><input name="tagline" value="${esc(general.tagline)}"></div>
+        <div class="field"><label>Tahun berdiri</label><input name="founded" value="${esc(general.founded)}"></div>
+      </div>
+      <div class="field"><label>Kota basis</label><input name="base_city" value="${esc(general.base_city)}"></div>
+      <div class="field"><label>Tentang (boleh pakai **tebal**, *miring*, baris "- " untuk daftar)</label><textarea name="about" rows="6">${esc(general.about)}</textarea></div>
+      <div class="field"><label>Visi</label><textarea name="vision" rows="2">${esc(general.vision)}</textarea></div>
+      <div class="field"><label>Misi</label><div class="list-edit" id="missionEdit"></div><button type="button" class="btn btn-ghost" id="addMission">+ Tambah misi</button></div>
+      <div style="margin-top:18px"><button class="btn btn-primary">Simpan profil</button></div>
+    </form></div>
+    <div class="panel"><h3>Kontak &amp; media sosial</h3><form id="conForm">
+      <div class="field"><label>Alamat sekretariat</label><input name="address" value="${esc(contact.address)}"></div>
+      <div class="field"><label>Link Google Maps</label><input name="maps_url" value="${esc(contact.maps_url)}"></div>
+      <div class="two-col">
+        <div class="field"><label>WhatsApp (format 628xxxxxxxxxx)</label><input name="whatsapp" value="${esc(contact.whatsapp)}"></div>
+        <div class="field"><label>Email</label><input name="email" type="email" value="${esc(contact.email)}"></div>
+        <div class="field"><label>Instagram</label><input name="instagram" value="${esc(contact.instagram)}"></div>
+        <div class="field"><label>Facebook</label><input name="facebook" value="${esc(contact.facebook)}"></div>
+        <div class="field"><label>YouTube</label><input name="youtube" value="${esc(contact.youtube)}"></div>
+        <div class="field"><label>TikTok</label><input name="tiktok" value="${esc(contact.tiktok)}"></div>
+        <div class="field"><label>Strava</label><input name="strava" value="${esc(contact.strava)}"></div>
+      </div>
+      <div style="margin-top:8px"><button class="btn btn-primary">Simpan kontak</button></div>
+    </form></div>`;
+
+  let missions=[...(general.missions||[])];
+  function renderMissions(){
+    $("#missionEdit").innerHTML=missions.map((m,i)=>`<div class="li"><input value="${esc(m)}" data-i="${i}"><button type="button" class="icon-sm danger" data-rm="${i}">×</button></div>`).join("")||'<p class="hint">Belum ada misi.</p>';
+  }
+  renderMissions();
+  $("#missionEdit").addEventListener("input",e=>{const i=e.target.dataset.i;if(i!==undefined)missions[i]=e.target.value});
+  $("#missionEdit").addEventListener("click",e=>{const i=e.target.dataset.rm;if(i!==undefined){missions.splice(+i,1);renderMissions()}});
+  $("#addMission").onclick=()=>{missions.push("");renderMissions();$("#missionEdit .li:last-child input").focus()};
+
+  $("#genForm").onsubmit=async e=>{
+    e.preventDefault();const fd=new FormData(e.target);
+    const v={...general,name:fd.get("name"),full_name:fd.get("full_name"),tagline:fd.get("tagline"),founded:fd.get("founded"),base_city:fd.get("base_city"),about:fd.get("about"),vision:fd.get("vision"),missions:missions.filter(m=>m.trim())};
+    try{await Repo.saveGeneral(v);toast("Profil komunitas tersimpan")}catch(err){toast(err.message,true)}
+  };
+  $("#conForm").onsubmit=async e=>{
+    e.preventDefault();const fd=new FormData(e.target);
+    const v=Object.fromEntries(fd.entries());
+    try{await Repo.saveContact(v);toast("Kontak tersimpan")}catch(err){toast(err.message,true)}
+  };
+}
+
+const EVENT_FIELDS=[
+  {k:"title",l:"Judul kegiatan",type:"text",req:true},
+  {k:"category",l:"Kategori",type:"select",opts:CATEGORY},
+  {k:"level",l:"Level",type:"select",opts:LEVELOPT},
+  {k:"start_at",l:"Mulai",type:"datetime",req:true},
+  {k:"end_at",l:"Selesai (opsional)",type:"datetime"},
+  {k:"meeting_point",l:"Titik kumpul",type:"text"},
+  {k:"meeting_map_url",l:"Link peta titik kumpul",type:"text"},
+  {k:"route_name",l:"Nama rute",type:"text"},
+  {k:"distance_km",l:"Jarak (km)",type:"number",step:"0.1"},
+  {k:"elevation_m",l:"Elevasi (m)",type:"number"},
+  {k:"cover_url",l:"Sampul",type:"image"},
+  {k:"registration_url",l:"Link pendaftaran (opsional)",type:"text"},
+  {k:"status",l:"Status",type:"select",opts:EVSTATUS},
+  {k:"description",l:"Deskripsi",type:"textarea",rows:6}
+];
+async function pageKegiatan(){
+  const events=await Repo.listEvents();
+  $("#content").innerHTML=`<div class="panel">
+    <div class="row-between"><div><h3 style="margin:0">Semua kegiatan</h3><p>Termasuk gowes rutin, touring, event, dan agenda internal.</p></div><button class="btn btn-primary" id="addEv">+ Tambah kegiatan</button></div>
+    <div class="list" id="evList"></div></div>`;
+  function draw(){
+    $("#evList").innerHTML=events.length?events.map(e=>`<div class="list-row">
+      <div class="thumb">${e.cover_url?`<img src="${esc(e.cover_url)}">`:esc((e.title||"?")[0])}</div>
+      <div class="main"><b>${esc(e.title)}</b><small>${fmtShort(e.start_at)} · ${esc(e.meeting_point||"")}</small></div>
+      <span class="pill ${e.status==="cancelled"?"warn":e.status==="draft"?"off":""}">${EVSTATUS[e.status]}</span>
+      <div class="acts"><button class="icon-sm" data-edit="${e.id}" aria-label="Ubah">✎</button></div>
+    </div>`).join(""):'<p class="empty-msg">Belum ada kegiatan. Klik "Tambah kegiatan" untuk membuat yang pertama.</p>';
+  }
+  draw();
+  function openEv(ev){
+    openForm({title:ev?"Ubah kegiatan":"Tambah kegiatan",fields:EVENT_FIELDS,value:ev||{category:"gowes_rutin",level:"santai",status:"draft"},
+      onSave:async v=>{v.id=ev?.id;const r=await Repo.saveEvent(v);const i=events.findIndex(x=>x.id===r.id);i>-1?events[i]=r:events.unshift(r);draw();toast("Kegiatan tersimpan")},
+      onDelete:ev?async()=>{await Repo.deleteEvent(ev.id);const i=events.findIndex(x=>x.id===ev.id);events.splice(i,1);draw()}:null});
+  }
+  $("#addEv").onclick=()=>openEv(null);
+  $("#evList").addEventListener("click",e=>{const t=e.target.closest("[data-edit]");if(t)openEv(events.find(x=>x.id===t.dataset.edit))});
+}
+
+const ALBUM_FIELDS=[
+  {k:"title",l:"Judul album",type:"text",req:true},
+  {k:"taken_on",l:"Tanggal kegiatan",type:"date"},
+  {k:"description",l:"Deskripsi",type:"textarea",rows:3},
+  {k:"cover_url",l:"Sampul album (opsional, default foto pertama)",type:"image"},
+  {k:"published",l:"Tampilkan di website",type:"checkbox",def:true}
+];
+async function pageGaleri(){
+  const albums=await Repo.listAlbums();
+  $("#content").innerHTML=`<div class="panel">
+    <div class="row-between"><div><h3 style="margin:0">Album galeri</h3><p>Buat album per kegiatan, lalu unggah fotonya.</p></div><button class="btn btn-primary" id="addAl">+ Tambah album</button></div>
+    <div class="list" id="alList"></div></div>`;
+  function draw(){
+    $("#alList").innerHTML=albums.length?albums.map(a=>`<div class="list-row">
+      <div class="thumb">${(a.cover_url||a.photos?.[0]?.url)?`<img src="${esc(a.cover_url||a.photos[0].url)}">`:"🖼"}</div>
+      <div class="main"><b>${esc(a.title)}</b><small>${(a.photos||[]).length} foto${a.taken_on?" · "+esc(a.taken_on):""}</small></div>
+      <span class="pill ${a.published?"":"off"}">${a.published?"Tampil":"Disembunyikan"}</span>
+      <div class="acts"><button class="icon-sm" data-photos="${a.id}" aria-label="Kelola foto">🖼</button><button class="icon-sm" data-edit="${a.id}" aria-label="Ubah">✎</button></div>
+    </div>`).join(""):'<p class="empty-msg">Belum ada album. Klik "Tambah album" untuk memulai.</p>';
+  }
+  draw();
+  function openAl(al){
+    openForm({title:al?"Ubah album":"Tambah album",fields:ALBUM_FIELDS,value:al||{published:true},
+      onSave:async v=>{v.id=al?.id;const r=await Repo.saveAlbum(v);if(al){Object.assign(al,r)}else{r.photos=[];albums.unshift(r)}draw();toast("Album tersimpan")},
+      onDelete:al?async()=>{await Repo.deleteAlbum(al.id);const i=albums.findIndex(x=>x.id===al.id);albums.splice(i,1);draw()}:null});
+  }
+  $("#addAl").onclick=()=>openAl(null);
+  $("#alList").addEventListener("click",e=>{
+    const ed=e.target.closest("[data-edit]");if(ed)return openAl(albums.find(x=>x.id===ed.dataset.edit));
+    const ph=e.target.closest("[data-photos]");if(ph)openPhotoManager(albums.find(x=>x.id===ph.dataset.photos));
+  });
+}
+function openPhotoManager(album){
+  $("#albumTitle").textContent="Foto — "+album.title;
+  function drawGrid(){
+    $("#photoGrid").innerHTML=(album.photos||[]).map(p=>`<div class="photo-card"><img src="${esc(p.url)}" alt=""><button data-rm="${p.id}" aria-label="Hapus foto">×</button></div>`).join("")||'<p class="empty-msg">Belum ada foto di album ini.</p>';
+  }
+  drawGrid();
+  $("#photoInput").value="";
+  $("#photoInput").onchange=async e=>{
+    const files=[...e.target.files];if(!files.length)return;
+    for(const file of files){
+      try{const url=await Repo.upload(await compressImage(file));const p=await Repo.addPhoto(album.id,{url,caption:""});album.photos=album.photos||[];album.photos.push(p)}
+      catch(err){toast(err.message||"Gagal mengunggah foto",true)}
+    }
+    e.target.value="";drawGrid();toast("Foto ditambahkan");
+  };
+  $("#photoGrid").onclick=async e=>{
+    const t=e.target.closest("[data-rm]");if(!t)return;
+    if(!confirm("Hapus foto ini?"))return;
+    try{await Repo.deletePhoto(album.id,t.dataset.rm);album.photos=album.photos.filter(p=>p.id!==t.dataset.rm);drawGrid()}
+    catch(err){toast(err.message,true)}
+  };
+  $("#albumDlg").showModal();
+}
+
+const POST_FIELDS=[
+  {k:"title",l:"Judul",type:"text",req:true},
+  {k:"category",l:"Kategori",type:"select",opts:POSTCAT},
+  {k:"author_name",l:"Penulis",type:"text"},
+  {k:"excerpt",l:"Ringkasan singkat (tampil di daftar berita)",type:"textarea",rows:2},
+  {k:"cover_url",l:"Sampul",type:"image"},
+  {k:"content",l:"Isi artikel (boleh pakai **tebal**, *miring*, judul dengan ##, baris tanda minus untuk daftar)",type:"textarea",rows:9},
+  {k:"status",l:"Status",type:"select",opts:POSTSTATUS}
+];
+async function pageBerita(){
+  const posts=await Repo.listPosts();
+  $("#content").innerHTML=`<div class="panel">
+    <div class="row-between"><div><h3 style="margin:0">Berita &amp; artikel</h3><p>Tulis kabar komunitas, tips, atau cerita dari jalan.</p></div><button class="btn btn-primary" id="addPo">+ Tulis artikel</button></div>
+    <div class="list" id="poList"></div></div>`;
+  function draw(){
+    $("#poList").innerHTML=posts.length?posts.map(p=>`<div class="list-row">
+      <div class="thumb">${p.cover_url?`<img src="${esc(p.cover_url)}">`:esc((p.title||"?")[0])}</div>
+      <div class="main"><b>${esc(p.title)}</b><small>${POSTCAT[p.category]||""} · ${p.published_at?fmtShort(p.published_at):"Belum terbit"}</small></div>
+      <span class="pill ${p.status==="draft"?"off":""}">${POSTSTATUS[p.status]}</span>
+      <div class="acts"><button class="icon-sm" data-edit="${p.id}" aria-label="Ubah">✎</button></div>
+    </div>`).join(""):'<p class="empty-msg">Belum ada artikel. Klik "Tulis artikel" untuk memulai.</p>';
+  }
+  draw();
+  function openPo(po){
+    openForm({title:po?"Ubah artikel":"Tulis artikel",fields:POST_FIELDS,value:po||{category:"berita",status:"draft"},
+      onSave:async v=>{v.id=po?.id;v.published_at=po?.published_at||null;const r=await Repo.savePost(v);const i=posts.findIndex(x=>x.id===r.id);i>-1?posts[i]=r:posts.unshift(r);draw();toast("Artikel tersimpan")},
+      onDelete:po?async()=>{await Repo.deletePost(po.id);const i=posts.findIndex(x=>x.id===po.id);posts.splice(i,1);draw()}:null});
+  }
+  $("#addPo").onclick=()=>openPo(null);
+  $("#poList").addEventListener("click",e=>{const t=e.target.closest("[data-edit]");if(t)openPo(posts.find(x=>x.id===t.dataset.edit))});
+}
+
+const MEMBER_FIELDS=[
+  {k:"name",l:"Nama",type:"text",req:true},
+  {k:"position",l:"Jabatan",type:"text"},
+  {k:"division",l:"Divisi",type:"text"},
+  {k:"photo_url",l:"Foto",type:"image"},
+  {k:"bio",l:"Bio singkat",type:"textarea",rows:3},
+  {k:"instagram",l:"Instagram (opsional)",type:"text"},
+  {k:"joined_year",l:"Tahun bergabung",type:"number"},
+  {k:"sort_order",l:"Urutan tampil (angka kecil di depan)",type:"number",def:0},
+  {k:"is_board",l:"Tampilkan sebagai pengurus di beranda",type:"checkbox"},
+  {k:"is_active",l:"Anggota aktif",type:"checkbox",def:true}
+];
+async function pageAnggota(){
+  const members=await Repo.listMembers();
+  $("#content").innerHTML=`<div class="panel">
+    <div class="row-between"><div><h3 style="margin:0">Anggota &amp; pengurus</h3><p>Centang "Tampilkan sebagai pengurus" agar muncul di halaman Pengurus.</p></div><button class="btn btn-primary" id="addMe">+ Tambah anggota</button></div>
+    <div class="list" id="meList"></div></div>`;
+  function draw(){
+    $("#meList").innerHTML=members.length?members.map(m=>`<div class="list-row">
+      <div class="thumb">${m.photo_url?`<img src="${esc(m.photo_url)}">`:esc((m.name||"?")[0])}</div>
+      <div class="main"><b>${esc(m.name)}</b><small>${esc(m.position||"Anggota")}</small></div>
+      ${m.is_board?'<span class="pill">Pengurus</span>':""}${!m.is_active?'<span class="pill off">Nonaktif</span>':""}
+      <div class="acts"><button class="icon-sm" data-edit="${m.id}" aria-label="Ubah">✎</button></div>
+    </div>`).join(""):'<p class="empty-msg">Belum ada anggota. Klik "Tambah anggota" untuk memulai.</p>';
+  }
+  draw();
+  function openMe(m){
+    openForm({title:m?"Ubah anggota":"Tambah anggota",fields:MEMBER_FIELDS,value:m||{is_active:true,sort_order:0},
+      onSave:async v=>{v.id=m?.id;const r=await Repo.saveMember(v);const i=members.findIndex(x=>x.id===r.id);i>-1?members[i]=r:members.push(r);draw();toast("Data anggota tersimpan")},
+      onDelete:m?async()=>{await Repo.deleteMember(m.id);const i=members.findIndex(x=>x.id===m.id);members.splice(i,1);draw()}:null});
+  }
+  $("#addMe").onclick=()=>openMe(null);
+  $("#meList").addEventListener("click",e=>{const t=e.target.closest("[data-edit]");if(t)openMe(members.find(x=>x.id===t.dataset.edit))});
+}
+
+const ROUTES={dashboard:pageDashboard,umum:pageUmum,kegiatan:pageKegiatan,galeri:pageGaleri,berita:pageBerita,anggota:pageAnggota};
+async function router(){
+  const r=(location.hash||"#dashboard").slice(1);
+  const page=ROUTES[r]?r:"dashboard";
+  $$("#nav a").forEach(a=>a.classList.toggle("active",a.dataset.r===page));
+  $("#pageTitle").textContent=PAGE_TITLES[page];
+  $("#side").classList.remove("open");
+  $("#content").innerHTML='<p class="empty-msg">Memuat…</p>';
+  try{await ROUTES[page]()}catch(err){console.error(err);$("#content").innerHTML=`<p class="empty-msg">Gagal memuat halaman: ${esc(err.message||err)}</p>`}
+}
+window.addEventListener("hashchange",router);
+$("#menuToggle").onclick=()=>$("#side").classList.toggle("open");
+$("#themeBtn").onclick=()=>{const html=document.documentElement,cur=html.getAttribute("data-theme");html.setAttribute("data-theme",cur==="dark"?"light":"dark")};
+
+/* ================= Boot / auth ================= */
+$("#loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  $("#loginErr").classList.add("hidden");$("#loginBtn").disabled=true;$("#loginBtn").textContent="Memeriksa…";
+  const r=await Repo.signIn($("#email").value.trim(),$("#pass").value);
+  $("#loginBtn").disabled=false;$("#loginBtn").textContent="Masuk";
+  if(!r.ok){$("#loginErr").textContent=r.error;$("#loginErr").classList.remove("hidden");return}
+  enterApp();
+});
+$("#setupForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  $("#setupErr").classList.add("hidden");$("#setupBtn").disabled=true;$("#setupBtn").textContent="Membuat akun…";
+  try{
+    const res=await fetch(API_BASE+"/api/setup",{method:"POST",headers:{"Content-Type":"application/json","X-Setup-Key":$("#su_key").value},
+      body:JSON.stringify({email:$("#su_email").value.trim(),password:$("#su_pass").value,full_name:$("#su_name").value.trim()})});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(data.error||("Gagal (kode "+res.status+")"));
+    $("#setupPane").classList.add("hidden");$("#loginPane").classList.remove("hidden");
+    $("#email").value=$("#su_email").value.trim();
+    toast("Akun admin dibuat. Silakan masuk.");
+  }catch(err){$("#setupErr").textContent=err.message;$("#setupErr").classList.remove("hidden")}
+  finally{$("#setupBtn").disabled=false;$("#setupBtn").textContent="Buat akun admin"}
+});
+$("#demoBtn").onclick=async()=>{await Repo.signIn();sessionStorage.setItem("rbicc_demo_session","1");enterApp()};
+$("#logoutLink").onclick=async e=>{e.preventDefault();await Repo.signOut();sessionStorage.removeItem("rbicc_demo_session");location.hash="#dashboard";location.reload()};
+
+function enterApp(){
+  $("#loginView").classList.add("hidden");
+  $("#appView").classList.remove("hidden");
+  $("#whoami").textContent=session?.user?.email||"";
+  $("#demoTag").classList.toggle("hidden",LIVE);
+  router();
+}
+
+(async function boot(){
+  LIVE=!!API_BASE;
+  if(!LIVE){
+    Repo=makeDemoRepo();
+    $("#demoBox").classList.remove("hidden");
+    const existing=await Repo.getSession();
+    if(existing){session=existing;enterApp()}
+    return;
+  }
+  Repo=makeApiRepo();
+  try{
+    const res=await fetch(API_BASE+"/api/setup/status");
+    if(!res.ok)throw new Error();
+    const {hasAdmin}=await res.json();
+    if(!hasAdmin){$("#setupPane").classList.remove("hidden");$("#loginPane").classList.add("hidden")}
+  }catch{
+    $("#loginErr").textContent="Tidak bisa terhubung ke "+API_BASE+". Periksa URL Worker sudah benar dan sudah di-deploy.";
+    $("#loginErr").classList.remove("hidden");
+    $("#demoBox").classList.remove("hidden");
+  }
+  const existing=await Repo.getSession();
+  if(existing){session=existing;enterApp()}
+})();
+</script>
+</body>
+</html>

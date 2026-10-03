@@ -1,0 +1,845 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RB ICC — Komunitas Sepeda</title>
+<meta name="description" content="Komunitas sepeda RB ICC: jadwal gowes, kalender kegiatan, galeri, berita, dan pengurus.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F8FF; --surface:#FFFFFF; --ink:#0E1B3D; --muted:#55627F; --line:#D9E3F5;
+  --sky:#2BA8FF; --cobalt:#2448FF; --cobalt-soft:#E4EAFF; --sun:#FFD23F; --coral:#FF5A5F; --mint:#14B88A;
+  --sky-top:#6CC8FF; --sky-mid:#B9E5FF; --sky-bot:#EAF6FF;
+  --glass:rgba(255,255,255,.72); --glass-line:rgba(255,255,255,.9);
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --wrap:1180px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0A1230; --surface:#121C42; --ink:#EEF3FF; --muted:#9AA8CC; --line:#25315E;
+  --cobalt:#7A8EFF; --cobalt-soft:#1D2A5E; --sky:#4CC0FF; --mint:#2EE6A6; --coral:#FF6F73;
+  --sky-top:#050B26; --sky-mid:#12205A; --sky-bot:#1E2F73;
+  --glass:rgba(18,28,66,.72); --glass-line:rgba(122,142,255,.35);
+}}
+:root[data-theme="dark"]{
+  --paper:#0A1230; --surface:#121C42; --ink:#EEF3FF; --muted:#9AA8CC; --line:#25315E;
+  --cobalt:#7A8EFF; --cobalt-soft:#1D2A5E; --sky:#4CC0FF; --mint:#2EE6A6; --coral:#FF6F73;
+  --sky-top:#050B26; --sky-mid:#12205A; --sky-bot:#1E2F73;
+  --glass:rgba(18,28,66,.72); --glass-line:rgba(122,142,255,.35);
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 80px);scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.6 var(--body);-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:var(--cobalt)}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px;border-radius:6px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 22px}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.08;letter-spacing:-.01em}
+h2{font-size:clamp(1.9rem,4.4vw,3rem);font-weight:800}
+h3{font-size:1.15rem;font-weight:700}
+.muted{color:var(--muted)}
+section{padding:84px 0}
+.sec-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:30px;flex-wrap:wrap}
+.sec-head p{margin:.5rem 0 0;color:var(--muted);max-width:54ch}
+
+/* ---------- Header + ride progress ---------- */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:color-mix(in srgb,var(--paper) 72%,transparent);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:66px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--display);font-weight:800;font-size:1.15rem}
+.brand svg{width:34px;height:34px}
+.nav ul{display:flex;gap:2px;list-style:none;margin:0;padding:0;align-items:center}
+.nav ul a{display:block;padding:8px 13px;border-radius:999px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav ul a:hover{background:var(--cobalt-soft)}
+.nav-cta{background:var(--sun);color:#1D1600!important;margin-left:6px}
+.nav-cta:hover{background:#FFDC5E!important}
+.menu-btn{display:none;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:600}
+.ride{position:relative;height:3px;background:var(--line)}
+.ride-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--sky),var(--cobalt),var(--coral))}
+.ride-bike{position:absolute;top:-17px;width:30px;height:20px;left:0;transform:translateX(-50%);color:var(--cobalt)}
+@media (max-width:900px){
+  .menu-btn{display:block}
+  .nav ul{position:absolute;left:12px;right:12px;top:72px;flex-direction:column;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px;display:none;box-shadow:0 18px 40px rgba(14,27,61,.18)}
+  .nav ul.open{display:flex}
+  .nav ul a{padding:12px 14px}
+  .nav-cta{margin:6px 0 0;text-align:center}
+}
+
+/* ---------- Hero ---------- */
+.hero{padding:0;position:relative;overflow:hidden;background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-mid) 40%,var(--sky-bot) 72%,var(--paper) 100%)}
+.sunglow{position:absolute;width:520px;height:520px;right:-120px;top:-180px;border-radius:50%;background:radial-gradient(circle,rgba(255,252,238,.98) 0%,rgba(255,240,200,.55) 32%,rgba(255,240,200,0) 68%);pointer-events:none}
+:root[data-theme="dark"] .sunglow{background:radial-gradient(circle,rgba(200,215,255,.55) 0%,rgba(122,142,255,.18) 30%,rgba(122,142,255,0) 65%);width:360px;height:360px;right:6%;top:-60px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sunglow{background:radial-gradient(circle,rgba(200,215,255,.55) 0%,rgba(122,142,255,.18) 30%,rgba(122,142,255,0) 65%);width:360px;height:360px;right:6%;top:-60px}}
+.stars{position:absolute;inset:0 0 45% 0;pointer-events:none;opacity:0;background-image:radial-gradient(1.4px 1.4px at 12% 22%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 28% 12%,#fff 50%,transparent 51%),radial-gradient(1.6px 1.6px at 44% 30%,#dfe6ff 50%,transparent 51%),radial-gradient(1px 1px at 63% 8%,#fff 50%,transparent 51%),radial-gradient(1.3px 1.3px at 78% 26%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 90% 14%,#cfd8ff 50%,transparent 51%),radial-gradient(1.2px 1.2px at 6% 40%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 54% 42%,#fff 50%,transparent 51%)}
+:root[data-theme="dark"] .stars{opacity:.9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stars{opacity:.9}}
+.scene{position:absolute;left:0;right:0;bottom:0;height:clamp(320px,30vw,400px);z-index:1;pointer-events:none}
+.scene canvas{display:block;width:100%!important;height:100%!important}
+.bike-fallback{display:none;position:absolute;left:50%;bottom:9%;width:min(560px,80%);transform:translateX(-35%);color:var(--cobalt)}
+.scene.fallback .bike-fallback{display:block}
+.hero-inner{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:start;padding-top:52px;padding-bottom:clamp(250px,21vw,300px)}
+.hero-copy,.next{position:relative;z-index:2}
+.hero h1{font-size:clamp(3.4rem,10.5vw,8.6rem);font-weight:800;line-height:.9;letter-spacing:-.035em;color:var(--ink)}
+.hero-sub{font-family:var(--display);font-weight:500;font-size:clamp(1rem,2vw,1.35rem);margin:16px 0 0;color:var(--ink)}
+.hero .lead{font-size:1.12rem;color:var(--ink);opacity:.82;max-width:42ch;margin:14px 0 26px}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:999px;border:0;text-decoration:none;font-weight:700;font-size:1rem;transition:transform .15s ease,box-shadow .15s ease}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:#2448FF;color:#fff;box-shadow:0 10px 24px rgba(36,72,255,.35)}
+.btn-primary:hover{box-shadow:0 14px 30px rgba(36,72,255,.45);transform:translateY(-1px)}
+.btn-sun{background:var(--sun);color:#1D1600;box-shadow:0 10px 24px rgba(255,190,0,.35)}
+.btn-sun:hover{transform:translateY(-1px)}
+.btn-glass{background:var(--glass);color:var(--ink);border:1px solid var(--glass-line);backdrop-filter:blur(8px)}
+
+/* Next ride HUD card */
+.next{background:var(--glass);border:1px solid var(--glass-line);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border-radius:24px;padding:22px;box-shadow:0 24px 60px rgba(14,27,61,.18)}
+.next-top{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:.92rem;color:var(--muted)}
+.when{background:var(--coral);color:#fff;font-weight:700;border-radius:999px;padding:3px 11px;font-size:.82rem;white-space:nowrap}
+.next-date{display:flex;align-items:center;gap:14px;margin:14px 0 4px}
+.next-date b{font-family:var(--display);font-size:3.4rem;font-weight:800;line-height:.9;color:var(--cobalt)}
+.next-date span{font-weight:600;line-height:1.3}
+.next h3{font-size:1.35rem;margin:10px 0 14px}
+.next-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.next-stats div{background:var(--surface);border-radius:14px;padding:10px 8px;text-align:center}
+.next-stats b{display:block;font-family:var(--display);font-size:1.15rem;line-height:1.2}
+.next-stats small{color:var(--muted);font-size:.8rem}
+.mini-profile{height:54px;margin:4px 0 10px}
+.mini-profile svg{width:100%;height:100%;display:block}
+.mini-profile .pl{fill:none;stroke:var(--cobalt);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.where{font-size:.95rem;margin:0 0 14px;color:var(--muted)}
+.where b{color:var(--ink);font-weight:600}
+.next .btn{width:100%}
+.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw 1.8s cubic-bezier(.6,.1,.2,1) .9s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media (max-width:900px){
+  .hero{padding-bottom:34px}
+  .hero-inner{grid-template-columns:1fr;gap:0;padding-top:34px;padding-bottom:0}
+  .scene{position:relative;inset:auto;height:clamp(240px,62vw,380px);margin:4px -22px 0;order:2}
+  .hero-copy{order:1}.next{order:3;margin-top:-6px}
+}
+@media (prefers-reduced-motion:reduce){.draw{animation:none;stroke-dashoffset:0}html{scroll-behavior:auto}.btn{transition:none}}
+
+/* ---------- Level ---------- */
+.lvl{display:inline-flex;align-items:center;gap:6px;font-size:.85rem;font-weight:700;white-space:nowrap}
+.lvl i{display:inline-flex;gap:2px;align-items:end}
+.lvl i b{width:4px;border-radius:2px;background:var(--line)}
+.lvl i b:nth-child(1){height:6px}.lvl i b:nth-child(2){height:10px}.lvl i b:nth-child(3){height:14px}
+.lvl.l1{color:var(--mint)}.lvl.l1 i b:nth-child(-n+1){background:var(--mint)}
+.lvl.l2{color:var(--cobalt)}.lvl.l2 i b:nth-child(-n+2){background:var(--cobalt)}
+.lvl.l3{color:var(--coral)}.lvl.l3 i b{background:var(--coral)}
+.chip{display:inline-block;font-size:.78rem;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--cobalt-soft);color:var(--cobalt);white-space:nowrap}
+.chip.cancel{background:#FFE3E4;color:#C62F35}
+
+/* ---------- About ---------- */
+.about{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:start}
+.about .prose p{max-width:60ch}
+.odo{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:26px}
+.odo div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 18px}
+.odo b{font-family:var(--display);font-size:1.5rem;display:block;line-height:1.1}
+.odo small{color:var(--muted)}
+.vm{border-radius:24px;padding:28px;background:var(--surface);border:1px solid var(--line);position:relative;overflow:hidden}
+.vm::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:linear-gradient(90deg,var(--sky),var(--cobalt),var(--coral),var(--sun))}
+.vm h3{margin:6px 0 8px}
+.vm ol{margin:8px 0 0;padding-left:1.25em}
+.vm ol li{margin:7px 0}
+.vm ol li::marker{color:var(--cobalt);font-weight:700}
+@media (max-width:900px){.about{grid-template-columns:1fr;gap:28px}}
+
+/* ---------- Events ---------- */
+.tabs{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px}
+.tabs button{border:0;background:none;padding:8px 16px;border-radius:999px;color:var(--muted);font-weight:700}
+.tabs button[aria-selected="true"]{background:var(--cobalt);color:#fff}
+.ev-layout{display:grid;grid-template-columns:1.35fr 1fr;gap:28px;align-items:start}
+@media (max-width:980px){.ev-layout{grid-template-columns:1fr}}
+.ev-list{display:flex;flex-direction:column;gap:10px}
+.ev{display:grid;grid-template-columns:66px 1fr auto;gap:16px;align-items:center;padding:14px;border:1px solid var(--line);background:var(--surface);border-radius:20px;text-align:left;width:100%;transition:border-color .15s,transform .15s}
+.ev:hover{border-color:var(--cobalt);transform:translateX(3px)}
+.ev-date{width:66px;height:66px;border-radius:16px;background:var(--cobalt-soft);display:grid;place-content:center;text-align:center}
+.ev-date b{display:block;font-family:var(--display);font-size:1.6rem;line-height:1;color:var(--cobalt)}
+.ev-date small{font-weight:700;color:var(--muted);font-size:.8rem}
+.ev-title{font-family:var(--display);font-weight:700;font-size:1.02rem;line-height:1.25;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ev-sub{color:var(--muted);font-size:.93rem;margin-top:4px}
+.ev-right{text-align:right;display:flex;flex-direction:column;gap:6px;align-items:end}
+.ev-right:empty{display:none}
+.ev-km{font-family:var(--display);font-weight:700;font-size:1.05rem}
+@media (max-width:560px){.ev{grid-template-columns:58px 1fr}.ev-date{width:58px;height:58px}.ev-right{grid-column:2;flex-direction:row;align-items:center;justify-content:start;gap:14px}}
+.empty{padding:30px 0;color:var(--muted)}
+
+/* ---------- Calendar ---------- */
+.cal{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px}
+.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cal-head h3{font-size:1.05rem}
+.cal-head button{background:var(--paper);border:1px solid var(--line);border-radius:50%;width:38px;height:38px;font-size:1.1rem}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-dow{font-size:.78rem;font-weight:700;color:var(--muted);padding:6px 0}
+.cal-day{aspect-ratio:1;border:0;background:none;border-radius:12px;font-weight:500;position:relative;font-size:.95rem}
+.cal-day.out{color:var(--line)}
+.cal-day.today{box-shadow:inset 0 0 0 2px var(--sky)}
+.cal-day.has{background:var(--cobalt-soft);font-weight:800;color:var(--cobalt)}
+.cal-day.has::after{content:"";position:absolute;left:50%;bottom:6px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--coral)}
+.cal-day.sel{background:var(--cobalt);color:#fff}
+.cal-day.sel::after{background:var(--sun)}
+.cal-agenda{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;font-size:.95rem}
+.cal-agenda button{display:flex;gap:10px;width:100%;text-align:left;background:none;border:0;padding:7px 0}
+.cal-agenda button b{color:var(--cobalt);min-width:56px}
+
+/* ---------- Gallery ---------- */
+.gal{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.album{grid-column:span 3;position:relative;border:0;padding:0;border-radius:22px;overflow:hidden;aspect-ratio:4/3;background:var(--line);color:#fff;text-align:left}
+.album:first-child{grid-column:span 6;grid-row:span 2;aspect-ratio:auto}
+.album .img{position:absolute;inset:0;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.album:hover .img{transform:scale(1.05)}
+.album .img img,.album .img svg{width:100%;height:100%;object-fit:cover}
+.album .cap{position:absolute;left:10px;right:10px;bottom:10px;padding:12px 14px;border-radius:16px;background:rgba(10,18,48,.45);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.album .cap b{font-family:var(--display);font-size:.98rem;display:block;line-height:1.2}
+.album .cap small{opacity:.85}
+@media (max-width:980px){.album{grid-column:span 6}.album:first-child{grid-column:span 12;grid-row:auto;aspect-ratio:16/9}}
+@media (max-width:560px){.album,.album:first-child{grid-column:span 12;aspect-ratio:16/10}}
+
+/* ---------- Posts ---------- */
+.posts{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.post{background:none;border:0;padding:0;text-align:left;display:flex;flex-direction:column;justify-content:flex-start}
+.post .img{aspect-ratio:16/10;border-radius:20px;overflow:hidden;background:var(--line);margin-bottom:14px}
+.post .img img,.post .img svg{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.post:hover .img img,.post:hover .img svg{transform:scale(1.04)}
+.post-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:.88rem;font-weight:500}
+.post h3{margin:8px 0 6px;font-size:1.08rem;line-height:1.3}
+.post:hover h3{color:var(--cobalt)}
+.post p{margin:0;color:var(--muted);font-size:.97rem}
+@media (max-width:900px){.posts{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.posts{grid-template-columns:1fr}}
+
+/* ---------- Board ---------- */
+.board{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:26px}
+.person{text-align:center}
+.avatar{width:124px;height:124px;border-radius:50%;margin:0 auto 14px;padding:4px;background:conic-gradient(from 210deg,var(--sky),var(--cobalt),var(--coral),var(--sun),var(--sky))}
+.avatar>div{width:100%;height:100%;border-radius:50%;overflow:hidden;background:var(--surface);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:2rem;color:var(--cobalt);border:3px solid var(--surface)}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.person b{display:block;font-size:1.05rem}
+.person small{color:var(--cobalt);font-weight:700}
+.person p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+
+/* ---------- Contact ---------- */
+.contact{position:relative;overflow:hidden;background:var(--cobalt);color:#fff;border-radius:32px;padding:48px;display:grid;grid-template-columns:1.2fr 1fr;gap:36px}
+:root[data-theme="dark"] .contact{background:#2436B8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .contact{background:#2436B8}}
+.contact .ring{position:absolute;right:-140px;bottom:-160px;width:460px;height:460px;opacity:.16;pointer-events:none}
+.contact>*:not(.ring){position:relative}
+.contact h2{color:#fff}
+.contact p{color:#DCE4FF}
+.contact dl{margin:0;display:grid;gap:14px}
+.contact dt{font-size:.88rem;color:#C3CFFF}
+.contact dd{margin:0;font-weight:600}
+.contact dd a{color:#fff}
+.socials{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.socials a{color:#fff;border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:6px 14px;text-decoration:none;font-weight:600;font-size:.93rem}
+.socials a:hover{background:rgba(255,255,255,.14)}
+.contact .btn-glass{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.45)}
+@media (max-width:760px){.contact{grid-template-columns:1fr;padding:30px;border-radius:26px}}
+footer{padding:36px 0 46px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{color:var(--muted)}
+
+/* ---------- Dialog & lightbox ---------- */
+dialog{border:0;padding:0;border-radius:26px;max-width:min(760px,calc(100vw - 24px));width:100%;background:var(--surface);color:var(--ink);max-height:calc(100dvh - 40px)}
+dialog::backdrop{background:rgba(8,14,40,.6);backdrop-filter:blur(4px)}
+dialog[open]{animation:pop .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.98)}}
+.dlg-body{padding:28px;overflow:auto;max-height:calc(100dvh - 40px)}
+.dlg-close{position:sticky;top:0;float:right;background:var(--paper);border:1px solid var(--line);border-radius:50%;width:40px;height:40px;font-size:1.2rem;line-height:1;z-index:2}
+.dlg-body h2{font-size:clamp(1.5rem,4vw,2.1rem);margin:8px 0 0}
+.dlg-body .cover{border-radius:18px;overflow:hidden;aspect-ratio:16/8;margin:16px 0 18px;background:var(--line)}
+.dlg-body .cover img,.dlg-body .cover svg{width:100%;height:100%;object-fit:cover}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:16px 0}
+.kv div{background:var(--paper);border-radius:14px;padding:10px 12px}
+.kv small{color:var(--muted);display:block}
+.kv b{font-weight:600}
+.prose{max-width:68ch}
+.prose h3{margin:22px 0 8px}
+.prose p{margin:0 0 14px}
+#lightbox{max-width:min(1100px,calc(100vw - 16px));background:#050A1F;color:#fff}
+.lb{position:relative;display:flex;flex-direction:column;max-height:calc(100dvh - 40px)}
+.lb-stage{flex:1;display:grid;place-items:center;min-height:0}
+.lb-stage img,.lb-stage svg{max-height:calc(100dvh - 160px);width:auto;max-width:100%;object-fit:contain}
+.lb-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px}
+.lb-bar button{background:rgba(255,255,255,.12);border:0;color:#fff;border-radius:999px;padding:8px 16px;font-weight:600}
+.lb-cap{font-size:.95rem;color:#C9D3EE;text-align:center;flex:1}
+.demo-note{background:var(--sun);color:#1D1600;text-align:center;font-size:.85rem;padding:6px 12px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="demo-note" id="demoNote" hidden>Mode demo: data contoh. Isi API_BASE di file ini untuk memakai data asli.</div>
+
+<header class="top">
+  <nav class="wrap nav" aria-label="Utama">
+    <a class="brand" href="#beranda" aria-label="RB ICC beranda">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="10" cy="26" r="7.5" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="30" cy="26" r="7.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M10 26 16 15h11l3 11M16 15l6 11h-12M14 11h5M27 15l-1-4h3" fill="none" stroke="#FF5A5F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <span data-bind="name">RB ICC</span>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navList">Menu</button>
+    <ul id="navList">
+      <li><a href="#tentang">Tentang</a></li>
+      <li><a href="#kegiatan">Kegiatan</a></li>
+      <li><a href="#galeri">Galeri</a></li>
+      <li><a href="#berita">Berita</a></li>
+      <li><a href="#pengurus">Pengurus</a></li>
+      <li><a class="nav-cta" href="#kontak">Ikut gowes</a></li>
+    </ul>
+  </nav>
+  <div class="ride" aria-hidden="true">
+    <div class="ride-fill" id="rideFill"></div>
+    <svg class="ride-bike" id="rideBike" viewBox="0 0 30 20"><circle cx="6" cy="14" r="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="14" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 14 11 6h8l5 8M11 6l4 8H6M10 3h4" fill="none" stroke="#FF5A5F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="beranda">
+    <div class="stars" aria-hidden="true"></div>
+    <div class="sunglow" aria-hidden="true"></div>
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <h1 data-bind="name">RB ICC</h1>
+        <p class="hero-sub" id="heroFull">Komunitas Sepeda RB ICC</p>
+        <p class="lead" id="heroTagline">Gowes bareng, pulang bawa cerita.</p>
+        <div class="btns">
+          <a class="btn btn-primary" href="#kegiatan">Lihat jadwal gowes</a>
+          <a class="btn btn-glass" href="#kontak">Ikut komunitas</a>
+        </div>
+      </div>
+      <div class="scene" id="scene" aria-hidden="true">
+        <svg class="bike-fallback" viewBox="0 0 220 120"><circle cx="45" cy="80" r="34" fill="none" stroke="currentColor" stroke-width="6"/><circle cx="175" cy="80" r="34" fill="none" stroke="currentColor" stroke-width="6"/><path d="M45 80 80 36h62l33 44M80 36l32 44H45M74 24h22M142 36l-5-16h16" fill="none" stroke="#FF5A5F" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      </div>
+      <aside class="next" id="bib" aria-label="Gowes berikutnya"></aside>
+    </div>
+  </section>
+
+  <section id="tentang">
+    <div class="wrap about">
+      <div>
+        <h2>Tentang kami</h2>
+        <div id="aboutText" class="prose" style="margin-top:14px"></div>
+        <div class="odo" id="facts"></div>
+      </div>
+      <div class="vm">
+        <h3>Visi</h3>
+        <p id="vision" class="muted" style="margin:0"></p>
+        <h3 style="margin-top:20px">Misi</h3>
+        <ol id="missions"></ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="kegiatan" style="padding-top:24px">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><h2>Kegiatan</h2><p>Jadwal gowes rutin, touring, dan acara komunitas. Pilih salah satu untuk melihat titik kumpul dan rute.</p></div>
+        <div class="tabs" role="tablist">
+          <button role="tab" aria-selected="true" data-tab="up">Akan datang</button>
+          <button role="tab" aria-selected="false" data-tab="past">Sudah lewat</button>
+        </div>
+      </div>
+      <div class="ev-layout">
+        <div class="ev-list" id="evList"></div>
+        <div class="cal" id="kalender">
+          <div class="cal-head">
+            <button id="calPrev" aria-label="Bulan sebelumnya">‹</button>
+            <h3 id="calTitle"></h3>
+            <button id="calNext" aria-label="Bulan berikutnya">›</button>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div class="cal-agenda" id="calAgenda"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="galeri" style="padding-top:24px">
+    <div class="wrap">
+      <div class="sec-head"><div><h2>Galeri</h2><p>Dokumentasi perjalanan dan kegiatan anggota.</p></div></div>
+      <div class="gal" id="gal"></div>
+    </div>
+  </section>
+
+  <section id="berita" style="padding-top:24px">
+    <div class="wrap">
+      <div class="sec-head"><div><h2>Berita &amp; artikel</h2><p>Kabar komunitas, tips bersepeda, dan cerita dari jalan.</p></div></div>
+      <div class="posts" id="posts"></div>
+    </div>
+  </section>
+
+  <section id="pengurus" style="padding-top:24px">
+    <div class="wrap">
+      <div class="sec-head"><div><h2>Pengurus</h2><p>Orang-orang yang menjaga jadwal, rute, dan keselamatan setiap gowes.</p></div></div>
+      <div class="board" id="board"></div>
+    </div>
+  </section>
+
+  <section id="kontak" style="padding-top:24px">
+    <div class="wrap">
+      <div class="contact">
+        <svg class="ring" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="6"><circle cx="100" cy="100" r="80"/><circle cx="100" cy="100" r="22"/></g><g fill="#fff" id="teeth"></g></svg>
+        <div>
+          <h2>Mau ikut gowes?</h2>
+          <p>Semua level diterima, dari yang baru punya sepeda sampai yang biasa nanjak. Hubungi kami untuk info gowes terdekat.</p>
+          <div class="btns" id="joinBtns"></div>
+          <div class="socials" id="socials"></div>
+        </div>
+        <dl id="contactList"></dl>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span id="copy"></span><a href="admin.html">Masuk admin</a></div></footer>
+
+<dialog id="dlg"><div class="dlg-body"><button class="dlg-close" data-close aria-label="Tutup">×</button><div id="dlgContent"></div></div></dialog>
+<dialog id="lightbox"><div class="lb">
+  <div class="lb-bar"><span id="lbCount"></span><button data-close aria-label="Tutup">Tutup</button></div>
+  <div class="lb-stage" id="lbStage"></div>
+  <div class="lb-bar"><button id="lbPrev">Sebelumnya</button><span class="lb-cap" id="lbCap"></span><button id="lbNext">Berikutnya</button></div>
+</div></dialog>
+
+<script>
+/* ================= KONFIGURASI =================
+   Isi dengan URL Worker (mis. https://rbicc.<subdomain>.workers.dev) setelah di-deploy.
+   Kosongkan ("") untuk mode demo. */
+const API_BASE = "";
+
+const LEVEL = {santai:{n:1,t:"Santai"},menengah:{n:2,t:"Menengah"},berat:{n:3,t:"Berat"}};
+const CATEGORY = {gowes_rutin:"Gowes rutin",touring:"Touring",event:"Event",sosial:"Sosial",agenda:"Agenda"};
+const POSTCAT = {berita:"Berita",tips:"Tips",cerita:"Cerita",pengumuman:"Pengumuman"};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl = u => /^(https?:|mailto:|tel:|\/|#)/i.test(String(u||"").trim()) ? String(u).trim() : "";
+const fmt = (d,o) => new Intl.DateTimeFormat("id-ID",o).format(new Date(d));
+const sameDay = (a,b) => a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function isDark(){const t=document.documentElement.dataset.theme;return t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches)}
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+
+/* ---------- Placeholder visual (jika gambar belum ada) ---------- */
+function hash(s){let h=2166136261;for(const c of String(s))h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0}
+function rng(seed){let x=seed||1;return()=>((x=Math.imul(x^(x>>>15),x|1)^(x+Math.imul(x^(x>>>7),x|61)),((x^(x>>>14))>>>0)/4294967296))}
+function art(seed){
+  const h=hash(seed), r=rng(h), pal=[["#2BA8FF","#2448FF"],["#FF5A5F","#FF9A3D"],["#14B88A","#2BA8FF"],["#2448FF","#16226E"],["#FFB21F","#FF5A5F"]][h%5];
+  let d="M0 "+(160+r()*40);
+  for(let x=40;x<=400;x+=40)d+=" L"+x+" "+(80+r()*120);
+  return `<svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice" role="img" aria-label=""><defs><linearGradient id="g${h}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${pal[0]}"/><stop offset="1" stop-color="${pal[1]}"/></linearGradient></defs><rect width="400" height="250" fill="url(#g${h})"/><g stroke="rgba(255,255,255,.14)" stroke-width="1">${[1,2,3,4,5,6,7].map(i=>`<line x1="${i*50}" y1="0" x2="${i*50}" y2="250"/>`).join("")}</g><path d="${d} L400 250 L0 250Z" fill="rgba(255,255,255,.14)"/><path d="${d}" fill="none" stroke="#fff" stroke-width="3.5" stroke-linejoin="round"/></svg>`;
+}
+const media = (url, seed, alt) => safeUrl(url) ? `<img src="${esc(safeUrl(url))}" alt="${esc(alt||"")}" loading="lazy">` : art(seed);
+
+/* ---------- Data demo ---------- */
+function demoData(){
+  const now=new Date(), at=(days,h,m=0)=>{const d=new Date(now);d.setDate(d.getDate()+days);d.setHours(h,m,0,0);return d.toISOString()};
+  const nextSun=((7-now.getDay())%7)||7;
+  return {
+    general:{name:"RB ICC",full_name:"Komunitas Sepeda RB ICC",tagline:"Gowes bareng, pulang bawa cerita. Komunitas sepeda yang terbuka untuk semua level, dengan jadwal rutin setiap pekan.",founded:"2019",base_city:"Medan",
+      about:"RB ICC berawal dari beberapa teman yang rutin gowes Minggu pagi. Sekarang kami adalah komunitas yang terbuka untuk pesepeda road, MTB, maupun sepeda lipat.\n\nSetiap gowes dipimpin road captain dan ditutup sweeper, jadi tidak ada yang tertinggal. Kecepatan menyesuaikan kelompok, bukan sebaliknya.",
+      vision:"Menjadi komunitas sepeda yang sehat, aman di jalan, dan bermanfaat bagi lingkungan sekitar.",
+      missions:["Gowes bersama setiap pekan dengan rute yang jelas","Mengutamakan keselamatan dan etika berkendara","Membuka ruang bagi pesepeda pemula","Aktif dalam kegiatan sosial dan lingkungan"]},
+    contact:{address:"Sekretariat RB ICC (alamat contoh)",whatsapp:"6281200000000",email:"halo@rbicc.example",maps_url:"",instagram:"https://instagram.com/",facebook:"",youtube:"https://youtube.com/",tiktok:"",strava:"https://strava.com/"},
+    events:[
+      {id:"e1",title:"Gowes Minggu Pagi",category:"gowes_rutin",level:"santai",start_at:at(nextSun,6),meeting_point:"Lapangan Merdeka",route_name:"Keliling kota",distance_km:35,elevation_m:120,description:"Gowes rutin mingguan dengan kecepatan santai 20–25 km/jam. Cocok untuk anggota baru.\n\nWajib helm, lampu depan-belakang, dan botol minum.",status:"published"},
+      {id:"e2",title:"Night Ride Tengah Pekan",category:"gowes_rutin",level:"santai",start_at:at(4,19,30),meeting_point:"Sekretariat RB ICC",route_name:"Rute kota malam",distance_km:25,elevation_m:60,description:"Gowes malam santai. Lampu wajib menyala sepanjang rute.",status:"published"},
+      {id:"e3",title:"Touring Sibolangit",category:"touring",level:"menengah",start_at:at(nextSun+7,5,30),meeting_point:"Simpang Pos",route_name:"Medan – Sibolangit PP",distance_km:92,elevation_m:780,description:"Touring ke Sibolangit dengan tanjakan bertahap. Ada mobil support dan titik istirahat di Pancur Batu.",status:"published"},
+      {id:"e4",title:"Rapat bulanan pengurus",category:"agenda",level:"santai",start_at:at(12,20),meeting_point:"Sekretariat RB ICC",description:"Evaluasi kegiatan bulan ini dan persiapan touring.",status:"published"},
+      {id:"e5",title:"Gowes Sosial: Bersih Pantai",category:"sosial",level:"santai",start_at:at(nextSun+14,6),meeting_point:"Lapangan Merdeka",route_name:"Menuju pantai",distance_km:48,elevation_m:40,description:"Gowes bersama lalu kerja bakti membersihkan pantai. Kantong sampah disediakan panitia.",status:"published"},
+      {id:"e6",title:"Berastagi Climb",category:"event",level:"berat",start_at:at(nextSun+28,5),meeting_point:"Simpang Pos",route_name:"Medan – Berastagi",distance_km:68,elevation_m:1450,description:"Tantangan tanjakan menuju Berastagi. Hanya untuk yang sudah terbiasa rute menanjak. Pendaftaran wajib.",registration_url:"https://example.com/daftar",status:"published"},
+      {id:"e7",title:"Ride Ulang Tahun Komunitas",category:"event",level:"menengah",start_at:at(-12,6),meeting_point:"Lapangan Merdeka",route_name:"Rute ulang tahun",distance_km:55,elevation_m:210,description:"Gowes perayaan ulang tahun komunitas.",status:"published"},
+      {id:"e8",title:"Touring Danau",category:"touring",level:"berat",start_at:at(-30,5),meeting_point:"Simpang Pos",distance_km:120,elevation_m:1300,description:"Touring dua hari.",status:"published"}],
+    albums:[
+      {id:"a1",title:"Ride Ulang Tahun Komunitas",taken_on:at(-12,6),photos:[1,2,3,4,5,6].map(i=>({id:"p1"+i,url:"",caption:"Momen ride ulang tahun #"+i}))},
+      {id:"a2",title:"Touring Danau",taken_on:at(-30,5),photos:[1,2,3,4].map(i=>({id:"p2"+i,url:"",caption:"Touring danau #"+i}))},
+      {id:"a3",title:"Gowes Minggu Pagi",taken_on:at(-5,6),photos:[1,2,3].map(i=>({id:"p3"+i,url:"",caption:"Minggu pagi #"+i}))},
+      {id:"a5",title:"Gowes Sosial Bulan Lalu",taken_on:at(-20,6),photos:[1,2,3].map(i=>({id:"p5"+i,url:"",caption:"Gowes sosial #"+i}))},
+      {id:"a4",title:"Night Ride",taken_on:at(-9,19),photos:[1,2].map(i=>({id:"p4"+i,url:"",caption:"Night ride #"+i}))}],
+    posts:[
+      {id:"n1",title:"Touring Sibolangit dibuka untuk anggota baru",category:"pengumuman",excerpt:"Rute 92 km dengan mobil support. Pendaftaran lewat road captain masing-masing kelompok.",author_name:"Humas RB ICC",published_at:at(-2,9),content:"Touring Sibolangit bulan ini terbuka untuk anggota baru yang sudah ikut minimal dua kali gowes rutin.\n\n## Yang perlu disiapkan\n- Ban dalam cadangan dan pompa\n- Minimal dua botol minum\n- Lampu belakang\n\nKumpul di **Simpang Pos** pukul 05.30. Rombongan berangkat tepat waktu."},
+      {id:"n2",title:"Lima hal yang dicek sebelum gowes pagi",category:"tips",excerpt:"Tekanan ban, rem, rantai, lampu, dan helm. Dua menit yang menyelamatkan perjalanan.",author_name:"Road Captain",published_at:at(-8,9),content:"Sebelum berangkat, luangkan dua menit untuk memeriksa sepeda.\n\n## Daftar cek\n- Tekanan ban sesuai rekomendasi\n- Rem depan dan belakang pakem\n- Rantai bersih dan terlumasi\n- Lampu menyala\n- Helm terpasang dengan benar"},
+      {id:"n3",title:"Cerita dari ride ulang tahun",category:"cerita",excerpt:"Lebih dari seratus pesepeda ikut merayakan ulang tahun komunitas pekan lalu.",author_name:"Humas RB ICC",published_at:at(-11,9),content:"Pagi itu lapangan sudah penuh sebelum pukul enam. Terima kasih untuk semua anggota, marshal, dan sponsor yang membantu."}],
+    members:[
+      {id:"m1",name:"Nama Ketua",position:"Ketua",is_board:true,bio:"Memimpin komunitas sejak 2021."},
+      {id:"m2",name:"Nama Wakil",position:"Wakil Ketua",is_board:true},
+      {id:"m3",name:"Nama Sekretaris",position:"Sekretaris",is_board:true},
+      {id:"m4",name:"Nama Bendahara",position:"Bendahara",is_board:true},
+      {id:"m5",name:"Nama Road Captain",position:"Koordinator Road Captain",is_board:true,bio:"Menyusun rute dan memimpin rombongan."},
+      {id:"m6",name:"Nama Humas",position:"Humas & Dokumentasi",is_board:true}],
+    memberCount: 128
+  };
+}
+
+/* ---------- Data dari Worker API ---------- */
+async function apiData(){
+  const res=await fetch(API_BASE+"/api/public");
+  if(!res.ok)throw new Error("API_"+res.status);
+  return res.json();
+}
+
+
+/* ---------- Render ---------- */
+let D, tab="up", calMonth=new Date(), selDay=null;
+calMonth.setDate(1);
+
+function levelHTML(l){const v=LEVEL[l]||LEVEL.santai;return `<span class="lvl l${v.n}"><i><b></b><b></b><b></b></i>${v.t}</span>`}
+function timeOf(e){return fmt(e.start_at,{hour:"2-digit",minute:"2-digit"}).replace(":",".")}
+function relDay(d){const a=new Date();a.setHours(0,0,0,0);const b=new Date(d);b.setHours(0,0,0,0);const n=Math.round((b-a)/864e5);return n===0?"Hari ini":n===1?"Besok":n>1?n+" hari lagi":""}
+
+function renderGeneral(){
+  const g=D.general;
+  document.querySelectorAll('[data-bind="name"]').forEach(el=>el.textContent=g.name||"RB ICC");
+  $("#heroTagline").textContent=g.tagline||"";
+  $("#heroFull").textContent=g.full_name||"Komunitas Sepeda";
+  document.title=(g.name||"RB ICC")+" — Komunitas Sepeda";
+  $("#aboutText").innerHTML=md(g.about||"");
+  $("#vision").textContent=g.vision||"";
+  $("#missions").innerHTML=(g.missions||[]).map(m=>`<li>${esc(m)}</li>`).join("");
+  const done=D.events.filter(e=>new Date(e.start_at)<new Date()&&e.status!=="cancelled");
+  const km=done.reduce((a,e)=>a+(+e.distance_km||0),0);
+  $("#facts").innerHTML=[
+    g.founded&&[g.founded,"tahun berdiri"],
+    [D.memberCount,"anggota aktif"],
+    [done.length,"kegiatan tercatat"],
+    km&&[Math.round(km).toLocaleString("id-ID")+" km","ditempuh bersama"]
+  ].filter(Boolean).map(([b,s])=>`<div><b>${esc(b)}</b><small>${esc(s)}</small></div>`).join("");
+  $("#copy").textContent=`© ${new Date().getFullYear()} ${g.full_name||g.name||"RB ICC"}`;
+}
+
+function profilePath(ev,W,H){
+  const r=rng(hash(ev?ev.id:"rbicc")),climb=Math.min(1,(ev?.elevation_m||300)/1500),n=36,pts=[];
+  for(let i=0;i<=n;i++){const y=H*.85-Math.sin(i/n*Math.PI)*climb*H*.7+(r()-.5)*H*.18;pts.push([i/n*W,Math.max(3,Math.min(H-3,y))])}
+  return pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+}
+function renderHero(){
+  const next=D.events.find(e=>new Date(e.start_at)>=new Date()&&e.status==="published"&&e.category!=="agenda");
+  const el=$("#bib");
+  if(!next){el.innerHTML=`<div class="next-top"><span>Gowes berikutnya</span></div><p style="margin:14px 0 0">Jadwal gowes berikutnya segera diumumkan. Pantau halaman ini atau hubungi pengurus.</p>`;return}
+  const d=new Date(next.start_at), W=300, H=54, p=profilePath(next,W,H);
+  el.innerHTML=`<div class="next-top"><span>Gowes berikutnya</span><span class="when">${esc(relDay(d))}</span></div>
+    <div class="next-date"><b>${d.getDate()}</b><span>${esc(fmt(d,{month:"long"}))}<br>${esc(fmt(d,{weekday:"long"}))}, ${timeOf(next)}</span></div>
+    <h3>${esc(next.title)}</h3>
+    <div class="next-stats">
+      <div><b>${next.distance_km?esc(+next.distance_km):"–"}</b><small>km</small></div>
+      <div><b>${next.elevation_m?esc(next.elevation_m):"–"}</b><small>m nanjak</small></div>
+      <div><b style="font-family:var(--body);font-size:.95rem;padding-top:3px">${levelHTML(next.level)}</b><small>level</small></div>
+    </div>
+    <div class="mini-profile" aria-hidden="true"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="mp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2BA8FF" stop-opacity=".45"/><stop offset="1" stop-color="#2BA8FF" stop-opacity="0"/></linearGradient></defs><path d="${p} L${W} ${H} L0 ${H}Z" fill="url(#mp)"/><path class="pl draw" d="${p}" vector-effect="non-scaling-stroke"/></svg></div>
+    ${next.meeting_point?`<p class="where">Kumpul di <b>${esc(next.meeting_point)}</b></p>`:""}
+    <button class="btn btn-primary" data-event="${esc(next.id)}">Lihat detail</button>`;
+  const pl=el.querySelector(".pl");if(pl)pl.style.setProperty("--len",Math.ceil(pl.getTotalLength()*1.3));
+}
+
+function renderEvents(){
+  const now=new Date();
+  let list=D.events.filter(e=>tab==="up"?new Date(e.start_at)>=now:new Date(e.start_at)<now);
+  if(tab==="past")list=list.slice().reverse();
+  $("#evList").innerHTML=list.length?list.map(e=>{
+    const d=new Date(e.start_at);
+    return `<button class="ev" data-event="${esc(e.id)}">
+      <div class="ev-date"><b>${d.getDate()}</b><small>${esc(fmt(d,{month:"short"}))}</small></div>
+      <div><div class="ev-title">${esc(e.title)} <span class="chip">${esc(CATEGORY[e.category]||"")}</span>${e.status==="cancelled"?' <span class="chip cancel">Dibatalkan</span>':""}</div>
+        <div class="ev-sub">${esc(fmt(d,{weekday:"long"}))}, ${timeOf(e)}${e.meeting_point?`<br>Kumpul di ${esc(e.meeting_point)}`:""}</div></div>
+      <div class="ev-right">${e.distance_km?`<span class="ev-km">${esc(+e.distance_km)} km</span>`:""}${e.category!=="agenda"?levelHTML(e.level):""}</div>
+    </button>`}).join(""):`<p class="empty">${tab==="up"?"Belum ada kegiatan terjadwal. Jadwal baru diumumkan setiap pekan.":"Belum ada kegiatan yang tercatat."}</p>`;
+}
+
+function renderCalendar(){
+  const y=calMonth.getFullYear(),m=calMonth.getMonth();
+  $("#calTitle").textContent=fmt(calMonth,{month:"long",year:"numeric"});
+  const first=new Date(y,m,1),start=new Date(first);start.setDate(1-((first.getDay()+6)%7));
+  const today=new Date();
+  let h=["Sen","Sel","Rab","Kam","Jum","Sab","Min"].map(d=>`<div class="cal-dow">${d}</div>`).join("");
+  for(let i=0;i<42;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);
+    if(i>=35&&d.getMonth()!==m)break;
+    const has=D.events.some(e=>sameDay(new Date(e.start_at),d));
+    const cls=["cal-day",d.getMonth()!==m&&"out",sameDay(d,today)&&"today",has&&"has",selDay&&sameDay(d,selDay)&&"sel"].filter(Boolean).join(" ");
+    h+=`<button class="${cls}" data-day="${d.toISOString()}" aria-label="${esc(fmt(d,{day:"numeric",month:"long"}))}${has?", ada kegiatan":""}">${d.getDate()}</button>`;
+  }
+  $("#calGrid").innerHTML=h;
+  const inMonth=D.events.filter(e=>{const d=new Date(e.start_at);return selDay?sameDay(d,selDay):d.getMonth()===m&&d.getFullYear()===y});
+  $("#calAgenda").innerHTML=inMonth.length?inMonth.map(e=>`<button data-event="${esc(e.id)}"><b>${new Date(e.start_at).getDate()} ${esc(fmt(e.start_at,{month:"short"}))}</b><span>${esc(e.title)}</span></button>`).join("")
+    :`<span class="muted">${selDay?"Tidak ada kegiatan di tanggal ini.":"Tidak ada kegiatan bulan ini."}</span>`;
+}
+
+function renderGallery(){
+  const al=D.albums.filter(a=>a.photos?.length);
+  $("#gal").innerHTML=al.length?al.slice(0,5).map(a=>`<button class="album" data-album="${esc(a.id)}">
+    <div class="img">${media(a.cover_url||a.photos[0]?.url,a.id,a.title)}</div>
+    <div class="cap"><b>${esc(a.title)}</b><small>${a.photos.length} foto${a.taken_on?", "+esc(fmt(a.taken_on,{month:"long",year:"numeric"})):""}</small></div></button>`).join("")
+    :`<p class="empty">Dokumentasi kegiatan akan tampil di sini setelah admin mengunggah foto.</p>`;
+}
+
+function renderPosts(){
+  $("#posts").innerHTML=D.posts.length?D.posts.slice(0,6).map(p=>`<button class="post" data-post="${esc(p.id)}">
+    <div class="img">${media(p.cover_url,p.id,p.title)}</div>
+    <div class="post-meta"><span class="chip">${esc(POSTCAT[p.category]||"Berita")}</span><span>${esc(fmt(p.published_at,{day:"numeric",month:"long",year:"numeric"}))}</span></div>
+    <h3>${esc(p.title)}</h3><p>${esc(p.excerpt||"")}</p></button>`).join("")
+    :`<p class="empty">Belum ada artikel.</p>`;
+}
+
+function initials(n){return String(n||"?").split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase()}
+function renderBoard(){
+  const b=D.members.filter(m=>m.is_board);
+  $("#board").innerHTML=b.length?b.map(m=>`<div class="person">
+    <div class="avatar"><div>${safeUrl(m.photo_url)?`<img src="${esc(safeUrl(m.photo_url))}" alt="" loading="lazy">`:esc(initials(m.name))}</div></div>
+    <b>${esc(m.name)}</b><small>${esc(m.position||"")}</small>${m.bio?`<p>${esc(m.bio)}</p>`:""}</div>`).join("")
+    :`<p class="empty">Susunan pengurus belum diisi.</p>`;
+}
+
+function renderContact(){
+  const c=D.contact,wa=String(c.whatsapp||"").replace(/\D/g,"");
+  $("#joinBtns").innerHTML=(wa?`<a class="btn btn-sun" href="https://wa.me/${wa}?text=${encodeURIComponent("Halo "+(D.general.name||"RB ICC")+", saya ingin ikut gowes.")}" target="_blank" rel="noopener">Chat WhatsApp</a>`:"")
+    +(c.email?`<a class="btn btn-glass" href="mailto:${esc(c.email)}">Kirim email</a>`:"");
+  const soc=[["instagram","Instagram"],["facebook","Facebook"],["youtube","YouTube"],["tiktok","TikTok"],["strava","Strava"]].filter(([k])=>safeUrl(c[k]));
+  $("#socials").innerHTML=soc.map(([k,t])=>`<a href="${esc(safeUrl(c[k]))}" target="_blank" rel="noopener">${t}</a>`).join("");
+  $("#contactList").innerHTML=[
+    c.address&&["Sekretariat",esc(c.address)+(safeUrl(c.maps_url)?`<br><a href="${esc(safeUrl(c.maps_url))}" target="_blank" rel="noopener">Buka peta</a>`:"")],
+    wa&&["WhatsApp","+"+esc(wa)],
+    c.email&&["Email",`<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>`],
+    ["Gowes rutin","Setiap Minggu pagi, cek jadwal di atas"]
+  ].filter(Boolean).map(([t,d])=>`<div><dt>${t}</dt><dd>${d}</dd></div>`).join("");
+  // gigi chainring dekoratif
+  let t="";for(let i=0;i<36;i++){const a=i/36*Math.PI*2,x=100+Math.cos(a)*86,y=100+Math.sin(a)*86;t+=`<rect x="${(x-4).toFixed(1)}" y="${(y-4).toFixed(1)}" width="8" height="8" rx="2" transform="rotate(${(a*180/Math.PI).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})"/>`}
+  $("#teeth").innerHTML=t;
+}
+
+/* Markdown sederhana dan aman */
+function md(src){
+  const inline=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\*(.+?)\*/g,"<i>$1</i>")
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,(m,t,u)=>{const v=safeUrl(u.replace(/&amp;/g,"&"));return v?`<a href="${esc(v)}" target="_blank" rel="noopener">${t}</a>`:t});
+  let out="",list=false;
+  for(const raw of String(src).split("\n")){
+    const l=raw.trim();
+    if(/^[-*] /.test(l)){if(!list){out+="<ul>";list=true}out+=`<li>${inline(l.slice(2))}</li>`;continue}
+    if(list){out+="</ul>";list=false}
+    if(!l)continue;
+    out+=/^#{1,3} /.test(l)?`<h3>${inline(l.replace(/^#+ /,""))}</h3>`:`<p>${inline(l)}</p>`;
+  }
+  return out+(list?"</ul>":"");
+}
+
+/* ---------- Dialog ---------- */
+function openDlg(html){$("#dlgContent").innerHTML=html;$("#dlg").showModal();$("#dlg .dlg-body").scrollTop=0}
+function showEvent(id){
+  const e=D.events.find(x=>String(x.id)===String(id));if(!e)return;
+  const d=new Date(e.start_at);
+  openDlg(`<span class="chip">${esc(CATEGORY[e.category]||"")}</span>${e.status==="cancelled"?' <span class="chip cancel">Dibatalkan</span>':""}
+    <h2>${esc(e.title)}</h2>
+    ${e.cover_url?`<div class="cover">${media(e.cover_url,e.id,e.title)}</div>`:""}
+    <div class="kv">
+      <div><small>Tanggal</small><b>${esc(fmt(d,{weekday:"long",day:"numeric",month:"long",year:"numeric"}))}</b></div>
+      <div><small>Jam kumpul</small><b>${timeOf(e)}</b></div>
+      ${e.meeting_point?`<div><small>Titik kumpul</small><b>${esc(e.meeting_point)}</b>${safeUrl(e.meeting_map_url)?` <a href="${esc(safeUrl(e.meeting_map_url))}" target="_blank" rel="noopener">peta</a>`:""}</div>`:""}
+      ${e.route_name?`<div><small>Rute</small><b>${esc(e.route_name)}</b></div>`:""}
+      ${e.distance_km?`<div><small>Jarak</small><b>${esc(+e.distance_km)} km</b></div>`:""}
+      ${e.elevation_m?`<div><small>Tanjakan</small><b>${esc(e.elevation_m)} m</b></div>`:""}
+      ${e.category!=="agenda"?`<div><small>Level</small><b>${levelHTML(e.level)}</b></div>`:""}
+    </div>
+    <div class="prose">${md(e.description||"")}</div>
+    ${safeUrl(e.registration_url)&&d>=new Date()?`<a class="btn btn-sun" href="${esc(safeUrl(e.registration_url))}" target="_blank" rel="noopener">Daftar kegiatan</a>`:""}`);
+}
+function showPost(id){
+  const p=D.posts.find(x=>String(x.id)===String(id));if(!p)return;
+  openDlg(`<div class="post-meta"><span class="chip">${esc(POSTCAT[p.category]||"Berita")}</span><span>${esc(fmt(p.published_at,{day:"numeric",month:"long",year:"numeric"}))}</span>${p.author_name?`<span>oleh ${esc(p.author_name)}</span>`:""}</div>
+    <h2>${esc(p.title)}</h2>
+    <div class="cover">${media(p.cover_url,p.id,p.title)}</div>
+    <div class="prose">${md(p.content||p.excerpt||"")}</div>`);
+}
+let lbAlbum=null,lbIdx=0;
+function showAlbum(id,i=0){lbAlbum=D.albums.find(a=>String(a.id)===String(id));if(!lbAlbum)return;lbIdx=i;lbRender();$("#lightbox").showModal()}
+function lbRender(){
+  const ps=lbAlbum.photos,p=ps[lbIdx];
+  $("#lbStage").innerHTML=media(p.url,p.id,p.caption||lbAlbum.title);
+  $("#lbCap").textContent=p.caption||lbAlbum.title;
+  $("#lbCount").textContent=`${lbAlbum.title}, foto ${lbIdx+1} dari ${ps.length}`;
+}
+function lbStep(n){if(!lbAlbum)return;const L=lbAlbum.photos.length;lbIdx=(lbIdx+n+L)%L;lbRender()}
+
+/* ================= 3D: road bike di jalan (three.js) ================= */
+function initHero3D(){
+  const host=$("#scene");
+  if(!window.THREE){host.classList.add("fallback");return}
+  let renderer;
+  try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:"low-power"})}catch(e){host.classList.add("fallback");return}
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  host.appendChild(renderer.domElement);
+
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(30,1,.1,200);
+  const hemi=new THREE.HemisphereLight(0xffffff,0x9fb3e6,1.05);scene.add(hemi);
+  const key=new THREE.DirectionalLight(0xffffff,.95);key.position.set(5,9,7);scene.add(key);
+  const rim=new THREE.DirectionalLight(0x7fd0ff,.6);rim.position.set(-6,3,-5);scene.add(rim);
+
+  const std=(c,m,r)=>new THREE.MeshStandardMaterial({color:c,metalness:m??.45,roughness:r??.3});
+  const mat={frame:std(0x2448ff,.5,.25),accent:std(0xff5a5f,.4,.3),tyre:std(0x1b2238,0,.85),rim:std(0xffd23f,.55,.3),metal:std(0xd7deef,.8,.25),dark:std(0x222a44,.2,.6)};
+
+  /* --- sepeda --- */
+  const bike=new THREE.Group(), UP=new THREE.Vector3(0,1,0);
+  function tube(a,b,r,m,parent){
+    const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),dir=B.clone().sub(A),len=dir.length();
+    const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,14),m);
+    mesh.position.copy(A).addScaledVector(dir,.5);
+    mesh.quaternion.setFromUnitVectors(UP,dir.normalize());
+    (parent||bike).add(mesh);return mesh;
+  }
+  function wheel(x){
+    const g=new THREE.Group();g.position.set(x,.7,0);
+    g.add(new THREE.Mesh(new THREE.TorusGeometry(.67,.045,14,64),mat.tyre));
+    const rimM=new THREE.Mesh(new THREE.TorusGeometry(.6,.055,10,64),mat.rim);rimM.scale.z=.8;g.add(rimM);
+    const pts=[];for(let i=0;i<20;i++){const a=i/20*Math.PI*2;pts.push(new THREE.Vector3(0,0,i%2?.05:-.05),new THREE.Vector3(Math.cos(a)*.56,Math.sin(a)*.56,0))}
+    const spokes=new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0xc3cde6}));g.add(spokes);
+    const hub=new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,.16,14),mat.metal);hub.rotation.x=Math.PI/2;g.add(hub);
+    bike.add(g);return g;
+  }
+  const rear=wheel(-1.0), front=wheel(1.0);
+  const BB=[-.1,.56,0];
+  tube(BB,[-.4,1.6,0],.05,mat.frame);                    // seat tube
+  tube([-.38,1.52,0],[.75,1.56,0],.045,mat.frame);       // top tube
+  tube(BB,[.79,1.42,0],.06,mat.frame);                   // down tube
+  tube([.8,1.38,0],[.72,1.64,0],.06,mat.accent);         // head tube
+  for(const z of [-.07,.07]){
+    tube(BB,[-1,.7,z],.025,mat.frame);                   // chainstay
+    tube([-.37,1.48,z*.5],[-1,.7,z],.022,mat.frame);     // seatstay
+    tube([.8,1.38,z*.4],[1,.7,z],.028,mat.accent);       // fork
+  }
+  tube([-.4,1.6,0],[-.47,1.87,0],.025,mat.metal);        // seatpost
+  const saddle=new THREE.Mesh(new THREE.BoxGeometry(.36,.05,.13),mat.dark);saddle.position.set(-.5,1.91,0);saddle.rotation.z=.03;bike.add(saddle);
+  tube([.72,1.64,0],[.71,1.73,0],.03,mat.metal);         // steerer
+  tube([.71,1.73,0],[.92,1.75,0],.026,mat.metal);        // stem
+  tube([.92,1.75,-.21],[.92,1.75,.21],.022,mat.metal);   // handlebar
+  for(const z of [-.21,.21]){
+    const drop=new THREE.Mesh(new THREE.TorusGeometry(.13,.02,8,20,Math.PI),mat.dark);
+    drop.position.set(.92,1.62,z);drop.rotation.z=-Math.PI/2;bike.add(drop);
+    tube([.92,1.49,z],[.8,1.49,z],.02,mat.dark);
+  }
+  const crank=new THREE.Group();crank.position.set(BB[0],BB[1],0);bike.add(crank);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.19,.025,8,40),mat.metal);ring.position.z=.1;crank.add(ring);
+  tube([0,0,.12],[0,-.2,.12],.022,mat.metal,crank);tube([0,0,-.12],[0,.2,-.12],.022,mat.metal,crank);
+  for(const [y,z] of [[-.2,.17],[.2,-.17]]){const pd=new THREE.Mesh(new THREE.BoxGeometry(.1,.025,.08),mat.dark);pd.position.set(0,y,z);crank.add(pd)}
+  const lamp=(c,x,y)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.07,12),new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:1.4}));m.rotation.z=Math.PI/2;m.position.set(x,y,0);bike.add(m)};
+  lamp(0xffffff,.99,1.7);lamp(0xff3344,-.52,1.74);
+  scene.add(bike);
+
+  /* --- jalan, grid, garis kecepatan --- */
+  const world=new THREE.Group();scene.add(world);
+  const roadMat=new THREE.MeshStandardMaterial({color:0x3e4a70,roughness:.9,metalness:0});
+  const road=new THREE.Mesh(new THREE.PlaneGeometry(220,3.4),roadMat);road.rotation.x=-Math.PI/2;road.position.y=.001;world.add(road);
+  const lineMat=new THREE.MeshBasicMaterial({color:0xffffff});
+  for(const z of [-1.55,1.55]){const l=new THREE.Mesh(new THREE.PlaneGeometry(220,.06),lineMat);l.rotation.x=-Math.PI/2;l.position.set(0,.004,z);world.add(l)}
+  const dashMat=new THREE.MeshBasicMaterial({color:0xffd23f}), dashes=[];
+  for(let i=0;i<40;i++){const d=new THREE.Mesh(new THREE.PlaneGeometry(1,.08),dashMat);d.rotation.x=-Math.PI/2;d.position.set(-40+i*2.2,.005,0);world.add(d);dashes.push(d)}
+  let grid=null;
+  function makeGrid(){
+    if(grid)world.remove(grid);
+    const c=isDark()?0x5a74ff:0x52b4ff;
+    const pts=[];for(let x=-60;x<=60;x+=2)pts.push(new THREE.Vector3(x,0,-24),new THREE.Vector3(x,0,24));
+    for(let z=-24;z<=24;z+=2)if(Math.abs(z)>1.6)pts.push(new THREE.Vector3(-60,0,z),new THREE.Vector3(60,0,z));
+    grid=new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:c,transparent:true,opacity:isDark()?.7:.9}));grid.position.y=-.004;world.add(grid);
+  }
+  const streakMat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.75}), streaks=[];
+  for(let i=0;i<12;i++){const s=new THREE.Mesh(new THREE.BoxGeometry(1+Math.random()*1.4,.012,.012),streakMat);s.position.set(-10+Math.random()*24,.25+Math.random()*1.5,-2.8+Math.random()*1.4);s.userData.v=9+Math.random()*8;world.add(s);streaks.push(s)}
+
+  function applyTheme(){
+    const dark=isDark(), fogC=new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--sky-bot").trim()||"#EAF6FF");
+    scene.fog=new THREE.Fog(fogC,10,38);
+    roadMat.color.set(dark?0x1a2350:0x3e4a70);
+    streakMat.opacity=dark?.5:.75;
+    hemi.intensity=dark?.75:1.05;
+    makeGrid();
+  }
+  applyTheme();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{applyTheme();if(REDUCE)render()});
+
+  /* --- kamera & ukuran --- */
+  let base={pos:new THREE.Vector3(),look:new THREE.Vector3()};
+  function layout(){
+    const w=host.clientWidth||1,h=host.clientHeight||1;
+    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+    const mobile=w<900&&host.offsetParent&&getComputedStyle(host).position!=="absolute";
+    if(mobile){base.pos.set(3.4,1.9,7.4);base.look.set(.1,1.05,0)}
+    else{base.pos.set(3,1.7,8);base.look.set(.1,1.3,0)}
+    camera.position.copy(base.pos);camera.lookAt(base.look);
+  }
+  new ResizeObserver(layout).observe(host);layout();
+
+  /* --- animasi --- */
+  let px=0,py=0,cx=0,cy=0,enter=REDUCE?1:0,last=performance.now(),running=false,visible=true,raf=0;
+  addEventListener("pointermove",e=>{px=e.clientX/innerWidth-.5;py=e.clientY/innerHeight-.5},{passive:true});
+  function render(){renderer.render(scene,camera)}
+  function frame(now){
+    raf=0;if(!running)return;
+    const dt=Math.min(.05,(now-last)/1000);last=now;
+    if(enter<1)enter=Math.min(1,enter+dt/1.9);
+    const e=1-Math.pow(1-enter,3), speed=4.2, roll=speed+(1-e)*6;
+    bike.position.x=-8*(1-e);
+    bike.position.y=Math.sin(now/240)*.01;
+    rear.rotation.z-=dt*roll/.67;front.rotation.z-=dt*roll/.67;crank.rotation.z-=dt*roll/.67*.42;
+    for(const d of dashes){d.position.x-=speed*dt;if(d.position.x<-44)d.position.x+=88}
+    if(grid){grid.position.x-=speed*dt;if(grid.position.x<-2)grid.position.x+=2}
+    for(const s of streaks){s.position.x-=s.userData.v*dt;if(s.position.x<-14)s.position.x=14+Math.random()*6}
+    cx+=(px-cx)*.05;cy+=(py-cy)*.05;
+    camera.position.set(base.pos.x+cx*1.6,base.pos.y-cy*.6,base.pos.z);
+    camera.lookAt(base.look);
+    render();
+    raf=requestAnimationFrame(frame);
+  }
+  function setRunning(on){
+    if(REDUCE){render();return}
+    if(on&&!running){running=true;last=performance.now();raf=requestAnimationFrame(frame)}
+    if(!on){running=false;if(raf)cancelAnimationFrame(raf);raf=0}
+  }
+  new IntersectionObserver(es=>{visible=es[0].isIntersecting;setRunning(visible&&!document.hidden)}).observe($(".hero"));
+  document.addEventListener("visibilitychange",()=>setRunning(visible&&!document.hidden));
+  if(REDUCE){bike.position.x=0;render()}else setRunning(true);
+}
+
+/* ---------- Progres scroll: sepeda kecil di header ---------- */
+let ticking=false;
+function updateRide(){
+  ticking=false;
+  const max=document.documentElement.scrollHeight-innerHeight, p=max>0?Math.min(1,scrollY/max):0;
+  $("#rideFill").style.width=(p*100)+"%";
+  $("#rideBike").style.left=`calc(${(p*100).toFixed(2)}% + ${(15-30*p).toFixed(1)}px)`;
+}
+addEventListener("scroll",()=>{if(!ticking){ticking=true;requestAnimationFrame(updateRide)}},{passive:true});
+addEventListener("resize",updateRide);
+
+/* ---------- Event listeners ---------- */
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-event],[data-post],[data-album],[data-close],[data-day],[data-tab]");
+  if(!t)return;
+  if(t.dataset.event)showEvent(t.dataset.event);
+  else if(t.dataset.post)showPost(t.dataset.post);
+  else if(t.dataset.album)showAlbum(t.dataset.album);
+  else if(t.hasAttribute("data-close"))t.closest("dialog").close();
+  else if(t.dataset.day){const d=new Date(t.dataset.day);selDay=selDay&&sameDay(selDay,d)?null:d;if(d.getMonth()!==calMonth.getMonth()){calMonth=new Date(d.getFullYear(),d.getMonth(),1)}renderCalendar()}
+  else if(t.dataset.tab){tab=t.dataset.tab;document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",b===t));renderEvents()}
+});
+document.querySelectorAll("dialog").forEach(d=>d.addEventListener("click",e=>{if(e.target===d)d.close()}));
+$("#lbPrev").onclick=()=>lbStep(-1);$("#lbNext").onclick=()=>lbStep(1);
+document.addEventListener("keydown",e=>{if($("#lightbox").open){if(e.key==="ArrowLeft")lbStep(-1);if(e.key==="ArrowRight")lbStep(1)}});
+let tx=0;$("#lbStage").addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
+$("#lbStage").addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)lbStep(dx<0?1:-1)});
+$("#calPrev").onclick=()=>{calMonth.setMonth(calMonth.getMonth()-1);selDay=null;renderCalendar()};
+$("#calNext").onclick=()=>{calMonth.setMonth(calMonth.getMonth()+1);selDay=null;renderCalendar()};
+$("#menuBtn").onclick=()=>{const u=$("#navList"),o=u.classList.toggle("open");$("#menuBtn").setAttribute("aria-expanded",o)};
+$("#navList").addEventListener("click",e=>{if(e.target.tagName==="A"){$("#navList").classList.remove("open");$("#menuBtn").setAttribute("aria-expanded",false)}});
+
+/* ---------- Mulai ---------- */
+(async function(){
+  const live=!!API_BASE;
+  try{D=live?await apiData():demoData()}
+  catch(err){console.error(err);D=demoData();$("#demoNote").textContent="Gagal memuat data dari server, menampilkan data contoh. Periksa API_BASE dan pastikan Worker sudah aktif.";$("#demoNote").hidden=false}
+  if(!live)$("#demoNote").hidden=false;
+  D.events.sort((a,b)=>new Date(a.start_at)-new Date(b.start_at));
+  renderGeneral();renderHero();renderEvents();renderCalendar();renderGallery();renderPosts();renderBoard();renderContact();updateRide();
+  loadScript(window.THREE_SRC||"https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js").then(initHero3D).catch(()=>$("#scene").classList.add("fallback"));
+})();
+</script>
+</body>
+</html>
