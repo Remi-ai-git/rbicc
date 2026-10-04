@@ -5,7 +5,7 @@ compatibility_date = "2026-09-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "rbicc-db"
-database_id = "9cf05928-bb2c-4a83-81a9-3616ca9ca0d1"
+database_id = "fc150e81-dbba-49d8-9624-67cd891ccec0"
 
 [vars]
 GITHUB_REPO = "Remi-ai-git/rbicc"
